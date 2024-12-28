@@ -1,0 +1,37 @@
+.text {
+    &-neutral-gray {
+        color: $neutralGray;
+    }
+}
+
+
+.hover-svg {
+    position: relative;
+    display: inline-block;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.hover-svg::before {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23000" viewBox="0 0 330 330"><path d="M250.606 154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213 0.001-5.857 5.858-5.857 15.355 0.001 21.213l139.393 139.39-139.394 139.39c-5.857 5.858-5.857 15.355 0.001 21.213C82.322 328.536 86.161 330 90 330s7.678-1.464 10.607-4.394l149.999-150.004c2.814-2.813 4.394-6.628 4.394-10.606C255 161.018 253.42 157.202 250.606 154.389z"/></svg>');
+    background-size: contain;
+    opacity: 0;
+    transition: left 0.3s ease, opacity 0.3s ease;
+}
+
+.hover-svg:hover {
+    color: $primary !important;
+    padding-left: 10px;
+}
+
+.hover-svg:hover::before {
+    left: -10px;
+    opacity: 1;
+}

@@ -1,0 +1,51 @@
+@mixin generate-display-utilities($breakpoint, $display) {
+	@media (min-width: $breakpoint) {
+		display: $display;
+	}
+}
+
+@mixin generate-justify-utilities($breakpoint, $justify) {
+	@media (min-width: $breakpoint) {
+		justify-content: $justify;
+	}
+}
+
+@mixin generate-width-utilities($breakpoint, $width) {
+	@media (min-width: $breakpoint) {
+		width: $width;
+	}
+}
+
+@mixin generate-gap-utilities($breakpoint, $gap, $type: all) {
+	@media (min-width: $breakpoint) {
+		@if $type == all {
+			gap: $gap;
+		} @else if $type == row {
+			row-gap: $gap;
+		} @else if $type == column {
+			column-gap: $gap;
+		}
+	}
+}
+
+@mixin generate-flex-direction($breakpoint, $direction) {
+	@media (min-width: $breakpoint) {
+		flex-direction: $direction;
+	}
+}
+
+@mixin generate-spacing-utilities($property, $value) {
+	#{$property}: $value;
+}
+
+@mixin generate-spacing-utilities-breakpoint($breakpoint, $property, $value) {
+	@media (min-width: $breakpoint) {
+		#{$property}: $value;
+	}
+}
+
+@mixin generate-text-alignment($breakpoint, $alignment) {
+	@media (min-width: $breakpoint) {
+		text-align: $alignment;
+	}
+}

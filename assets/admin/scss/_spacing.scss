@@ -1,0 +1,197 @@
+@each $spacing-key, $spacing-value in $spacing-scale {
+	// General margin and padding utilities (No breakpoint)
+	.m-#{$spacing-key} {
+		@include generate-spacing-utilities(margin, $spacing-value);
+	}
+
+	.mt-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-top, $spacing-value);
+	}
+
+	.me-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-right, $spacing-value);
+	}
+
+	.mb-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-bottom, $spacing-value);
+	}
+
+	.ms-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-left, $spacing-value);
+	}
+
+	.mx-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-left, $spacing-value);
+		@include generate-spacing-utilities(margin-right, $spacing-value);
+	}
+
+	.my-#{$spacing-key} {
+		@include generate-spacing-utilities(margin-top, $spacing-value);
+		@include generate-spacing-utilities(margin-bottom, $spacing-value);
+	}
+
+	.p-#{$spacing-key} {
+		@include generate-spacing-utilities(padding, $spacing-value);
+	}
+
+	.pt-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-top, $spacing-value);
+	}
+
+	.pe-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-right, $spacing-value);
+	}
+
+	.pb-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-bottom, $spacing-value);
+	}
+
+	.ps-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-left, $spacing-value);
+	}
+
+	.px-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-left, $spacing-value);
+		@include generate-spacing-utilities(padding-right, $spacing-value);
+	}
+
+	.py-#{$spacing-key} {
+		@include generate-spacing-utilities(padding-top, $spacing-value);
+		@include generate-spacing-utilities(padding-bottom, $spacing-value);
+	}
+
+	// Responsive margin and padding utilities (With breakpoint)
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.m-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin,
+				$spacing-value
+			);
+		}
+
+		.mt-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-top,
+				$spacing-value
+			);
+		}
+
+		.me-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-right,
+				$spacing-value
+			);
+		}
+
+		.mb-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-bottom,
+				$spacing-value
+			);
+		}
+
+		.ms-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-left,
+				$spacing-value
+			);
+		}
+
+		.mx-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-left,
+				$spacing-value
+			);
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-right,
+				$spacing-value
+			);
+		}
+
+		.my-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-top,
+				$spacing-value
+			);
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				margin-bottom,
+				$spacing-value
+			);
+		}
+
+		.p-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding,
+				$spacing-value
+			);
+		}
+
+		.pt-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-top,
+				$spacing-value
+			);
+		}
+
+		.pe-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-right,
+				$spacing-value
+			);
+		}
+
+		.pb-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-bottom,
+				$spacing-value
+			);
+		}
+
+		.ps-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-left,
+				$spacing-value
+			);
+		}
+
+		.px-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-left,
+				$spacing-value
+			);
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-right,
+				$spacing-value
+			);
+		}
+
+		.py-#{$breakpoint}-#{$spacing-key} {
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-top,
+				$spacing-value
+			);
+			@include generate-spacing-utilities-breakpoint(
+				$breakpoint-value,
+				padding-bottom,
+				$spacing-value
+			);
+		}
+	}
+}

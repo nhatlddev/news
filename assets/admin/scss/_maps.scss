@@ -1,0 +1,64 @@
+$breakpoints: (
+	sm: 576px,
+	md: 768px,
+	lg: 992px,
+	xl: 1200px,
+	xxl: 1400px,
+);
+
+$display-utilities: (
+	none,
+	block,
+	flex,
+	inline,
+	inline-block,
+	inline-flex,
+	grid,
+	table,
+	table-cell,
+	table-row
+);
+
+$width-utilities: (
+	auto: auto,
+	"25": 25%,
+	"50": 50%,
+	"75": 75%,
+	"100": 100%,
+	"fit": fit-content,
+	"max": max-content,
+	"min": min-content,
+);
+
+$justify-values: (
+	start: flex-start,
+	end: flex-end,
+	center: center,
+	between: space-between,
+	around: space-around,
+	evenly: space-evenly,
+);
+
+$gap-utilities: (
+	0: 0,
+	1: 0.25rem,
+	2: 0.5rem,
+	3: 1rem,
+	4: 1.5rem,
+	5: 3rem,
+	auto: auto,
+);
+
+$flex-directions: (row, row-reverse, column, column-reverse);
+
+$spacing-scale: (
+	0: 0,
+	1: 0.25rem,
+	2: 0.5rem,
+	3: 1rem,
+	4: 1.5rem,
+	5: 3rem,
+	auto: auto,
+);
+
+$text-alignments: (start, center, end);

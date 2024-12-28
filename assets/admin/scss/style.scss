@@ -1,0 +1,131 @@
+@import "_variable";
+@import "_maps";
+@import "_mixin";
+@import "_spacing";
+
+@each $display in $display-utilities {
+	.d-#{$display} {
+		display: $display;
+	}
+
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.d-#{$breakpoint}-#{$display} {
+			@include generate-display-utilities($breakpoint-value, $display);
+		}
+	}
+}
+
+@each $justify, $value in $justify-values {
+	.justify-content-#{$justify} {
+		justify-content: $value;
+	}
+
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.justify-content-#{$breakpoint}-#{$justify} {
+			@include generate-justify-utilities($breakpoint-value, $value);
+		}
+	}
+}
+
+@each $width-key, $width-value in $width-utilities {
+	.w-#{$width-key} {
+		width: $width-value;
+	}
+
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.w-#{$breakpoint}-#{$width-key} {
+			@include generate-width-utilities($breakpoint-value, $width-value);
+		}
+	}
+}
+
+@each $gap-key, $gap-value in $gap-utilities {
+	// All gap
+	.gap-#{$gap-key} {
+		gap: $gap-value;
+	}
+
+	// Row gap
+	.row-gap-#{$gap-key} {
+		row-gap: $gap-value;
+	}
+
+	// Column gap
+	.col-gap-#{$gap-key} {
+		column-gap: $gap-value;
+	}
+
+	// Responsive gap classes
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		// All gap
+		.gap-#{$breakpoint}-#{$gap-key} {
+			@include generate-gap-utilities($breakpoint-value, $gap-value, all);
+		}
+
+		// Row gap
+		.row-gap-#{$breakpoint}-#{$gap-key} {
+			@include generate-gap-utilities($breakpoint-value, $gap-value, row);
+		}
+
+		// Column gap
+		.col-gap-#{$breakpoint}-#{$gap-key} {
+			@include generate-gap-utilities($breakpoint-value, $gap-value, column);
+		}
+	}
+}
+
+@each $direction in $flex-directions {
+	.flex-#{$direction} {
+		flex-direction: $direction;
+	}
+
+	// Responsive flex-direction classes
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.flex-#{$breakpoint}-#{$direction} {
+			@include generate-flex-direction($breakpoint-value, $direction);
+		}
+	}
+}
+
+@each $alignment in $text-alignments {
+	.text-#{$alignment} {
+		text-align: $alignment;
+	}
+
+	// Responsive text alignment classes
+	@each $breakpoint, $breakpoint-value in $breakpoints {
+		.text-#{$alignment}-#{$breakpoint} {
+			@include generate-text-alignment($breakpoint-value, $alignment);
+		}
+	}
+}
+
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover {
+	z-index: 3;
+	color: #fff;
+	cursor: default;
+	background-color: $primary;
+	border-color: $primary;
+}
+
+.text-wrap {
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: break-word;
+}
+
+.text-nowrap {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.text-break {
+	word-wrap: break-word;
+	word-break: break-all;
+}
