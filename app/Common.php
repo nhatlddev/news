@@ -1771,6 +1771,15 @@ if (!function_exists('getPostByCategoryId')) {
     }
 }
 
+if (!function_exists('getPageViewsSumByCategory')) {
+    function getPageViewsSumByCategory($categoryId)
+    {
+        $model = new \App\Models\PostModel();
+        $sum = $model->getPageViewsSumByCategory($categoryId);
+        return $sum;
+    }
+}
+
 //get breaking news
 if (!function_exists('getBreakingNews')) {
     function getBreakingNews()

@@ -4,7 +4,7 @@
         <div class="row">
             <!-- Logo and Address -->
             <div class="col-md-3 mb-4">
-                <h5>UNI-PRESIDENT VIỆT NAM</h5>
+                <h5 class="text-primary-first">UNI-PRESIDENT VIỆT NAM</h5>
                 <!-- <img src="./assets/img/uni-logo.jpg" alt="Office Image" class="img-fluid mb-3"> -->
                 <!-- <p><strong>Địa chỉ:</strong></p> -->
                 <p>
@@ -17,16 +17,16 @@
             </div>
 
             <!-- Recent Posts -->
-            <div class="col-md-3 mb-4">
-                <h5><?= trans("most_viewed_posts"); ?></h5>
+            <div class="col-md-4 mb-4">
+                <h5 class="text-primary-first"><?= trans("most_viewed_posts"); ?></h5>
                 <ul class="list-unstyled">
                     <?php $mostViewedPosts = getMostViewedPosts(5); 
                         if (!empty($mostViewedPosts)):
                             foreach ($mostViewedPosts as $item): ?>
                             <li class="mb-2">
                                 <p class="mb-0">
-                                    <a href="<?= generatePostURL($item); ?>" <?php postURLNewTab($item); ?>>
-                                        <?= esc(characterLimiter($item->title, 80, '...')); ?>
+                                    <a class="hover-primary" href="<?= generatePostURL($item); ?>" <?php postURLNewTab($item); ?>>
+                                        <?= esc(characterLimiter($item->title, 45, '...')); ?>
                                     </a>
                                 </p>
                                 <!-- <small class="text-muted"><?= formatDateFront($item->created_at); ?></small> -->
@@ -38,14 +38,14 @@
 
             <!-- Recent Comments -->
             <div class="col-md-3 mb-4">
-                <h5>Chuyên mục</h5>
+                <h5 class="text-primary-first">Chuyên mục</h5>
                 <ul class="list-unstyled">
                 <?php $categoryFooter = getCategoryFooter(5); ?>
                 <?php 
                     if (!empty($categoryFooter)):
                         foreach ($categoryFooter as $item): ?>
                     <li class="mb-2">
-                        <a href="<?= generateCategoryURL($item); ?>">
+                        <a class="hover-primary" href="<?= generateCategoryURL($item); ?>">
                             <?= esc(characterLimiter($item->name, 80, '...')); ?>
                         </a>
                     </li>
@@ -55,12 +55,13 @@
             </div>
 
             <!-- Newsletter -->
-            <div class="col-md-3 mb-4">
-                <h5>Liên hệ</h5>
+            <div class="col-md-2 mb-4">
+                <h5 class="text-primary-first">Liên hệ</h5>
                 <!-- <p>Get in touch with us right now.</p> -->
                 <div class="d-flex flex-column cursor-pointer">
                     <span class="hover-primary">Anh Khoa - 2303</span>
                     <span class="hover-primary">Tường Ly - 2301</span>
+                    <span class="hover-primary">Đức Nhật - 2302</span>
                 </div>
                 <!-- Social Icons -->
                 <!-- <div class="social-icons mt-3">
@@ -122,7 +123,8 @@
     <script src="<?= base_url($assetsPath . '/js/plugins.js'); ?> "></script>
     <script src="<?= base_url($assetsPath . '/js/main-2.2.min.js'); ?> "></script>
     <script src="<?= base_url('assets/vendor/js/common.js'); ?>"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.0.0-beta.2.4/owl.carousel.js"></script> -->
 <?= loadView('partials/_js_footer'); ?>
     <script>$("form[method='post']").append("<input type='hidden' name='sys_lang_id' value='<?= $activeLang->id; ?>'>");</script>
 <?php if ($generalSettings->pwa_status == 1): ?>
@@ -141,7 +143,7 @@
 <?php endif; ?>
 <?= $generalSettings->adsense_activation_code; ?>
 <?= $generalSettings->google_analytics; ?>
-// <?= $generalSettings->custom_footer_codes; ?>
+
     </body>
     </html>
 <?php if (!empty($isPage404)): exit(); endif; ?>

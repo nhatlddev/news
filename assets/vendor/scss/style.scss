@@ -4,6 +4,7 @@
 @import "_utilities";
 @import "../bootstrap-5.3.3/scss/bootstrap";
 @import "_text";
+@import "_flag";
 
 @import "../bootstrap-icons-1.11.3/font/bootstrap-icons.min.css";
 
@@ -248,6 +249,7 @@ body {
 	color: $white;
 	background-color: $primary;
 	padding: 0 20px;
+	width: 120px;
 }
 
 footer {
@@ -440,7 +442,7 @@ footer a:hover {
 .badge {
 	font-size: 0.75rem;
 	line-height: 25px;
-	padding: 0 10px;
+	padding: 20px 20px;
 }
 
 span.bg-white.border {
@@ -599,7 +601,7 @@ span.bg-white.border i {
 	color: #fff;
 	border: 1px solid #e2e2e2;
 	font-size: 12px;
-	background-color: #a9a9a9 !important;
+	background-color: $primary !important;
 	position: relative;
 	-webkit-transition: all 0.3s ease 0s;
 	-o-transition: all 0.3s ease 0s;
@@ -731,22 +733,177 @@ span.bg-white.border i {
 	box-sizing: border-box;
 
 	@include media-breakpoint-up(sm) {
-		max-width: 640px; 
+		max-width: 640px;
 	}
 	@include media-breakpoint-up(md) {
-		max-width: 820px; 
+		max-width: 820px;
 	}
 	@include media-breakpoint-up(lg) {
-		max-width: 1080px; 
+		max-width: 1080px;
 	}
 	@include media-breakpoint-up(xl) {
-		max-width: 1260px; 
+		max-width: 1260px;
 	}
 	@include media-breakpoint-up(xxl) {
-		max-width: 1460px; 
+		max-width: 1460px;
 	}
 }
 
 .h-fit-content {
-    height: fit-content !important;
+	height: fit-content !important;
+}
+
+.text-primary-first::first-letter {
+	color: $primary;
+	font-weight: bold;
+}
+
+.custom-overlay {
+	border-radius: 8px;
+	padding: 1rem;
+	max-width: 100%;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-overlay h5.card-title {
+	font-size: 1rem;
+	font-weight: bold;
+	line-height: 1.5;
+	margin-bottom: 0.5rem;
+}
+
+.custom-overlay p {
+	margin: 0;
+	color: #ccc;
+	font-size: 0.85rem;
+}
+
+.card {
+	position: relative;
+	overflow: hidden;
+}
+
+.card-footer {
+	z-index: 2;
+	position: relative;
+}
+
+.card-img-overlay {
+	z-index: 1;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.post-item {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.post-item:last-child {
+	border-bottom: none !important;
+}
+
+.carousel-caption {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+	color: white;
+	padding: 20px;
+	text-align: center;
+	top: 65%;
+}
+
+.opacFull {
+	opacity: 1 !important;
+}
+
+.slider-container {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.site-slider {
+	position: relative;
+}
+.site-slider li {
+	line-height: 0;
+	list-style: none;
+}
+
+.slider-img {
+	width: 100%;
+	height: 100%;
+}
+
+.slider-text {
+	position: absolute;
+	top: 50%;
+	left: 100px;
+	line-height: normal;
+	color: #fff;
+	transform: translateY(-50%);
+}
+.slider-text h3 {
+	font-size: 40px;
+	font-weight: 400;
+	margin-bottom: 10px;
+	opacity: 0;
+}
+.slider-text p {
+	font-size: 18px;
+	opacity: 0;
+}
+
+.owl-dots {
+	position: absolute;
+	top: 50%;
+	right: 20px;
+	transform: translateY(-50%);
+}
+.owl-dots .owl-dot {
+	width: 10px;
+	height: 10px;
+	background: #fff !important;
+	display: block;
+	margin: 10px 0;
+	border-radius: 50%;
+}
+.owl-dots .owl-dot.active {
+	background: #e05038 !important;
+	transform: scale(1.5);
+}
+
+.animate-in-fast {
+	animation: in-fast 1000ms ease-in-out forwards;
+}
+
+@keyframes in-fast {
+	0% {
+		opacity: 0;
+		transform: translateX(-3em);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+.animate-in-slow {
+	animation: in-slow 1000ms linear forwards;
+}
+
+@keyframes in-slow {
+	0% {
+		opacity: 0;
+		transform: translateX(3em);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }

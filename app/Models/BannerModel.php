@@ -18,6 +18,8 @@ class BannerModel extends BaseModel
             'lang_id' => inputPost('lang_id'),
             'sort' => inputPost('sort'),
             'visibility' => inputPost('visibility'),
+            'title' => inputPost('title'),
+            'content' => inputPost('content')
         ];
         return $data;
     }

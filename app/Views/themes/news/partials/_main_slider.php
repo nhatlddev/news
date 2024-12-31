@@ -1,7 +1,52 @@
 <div class="container my-4">
     <div class="row gx-2">
-        <div class="col-lg-8">
-            <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="col-lg-9">
+
+            <div class="slider-container">
+                <div class="site-slider owl-carousel">
+                <?php 
+                        $i = 0;
+                        if(!empty($banners)): 
+                            foreach($banners as $item):
+                                $imgBaseURL = getBaseURLByStorage($item->storage); 
+                        ?>
+                    <div>
+                        <div class="slider-img">
+                            <img src="<?= esc($item->file_path); ?>" alt="Slide 1" />
+                        </div>
+                        <div class="slider-text">
+                            <h3><?= esc($item->title); ?></h3>
+                            <p><?= esc($item->content); ?></p>
+                        </div>
+                    </div>
+
+                    <?php  
+                                $i++;   
+                                endforeach;
+                        endif; 
+                    ?> 
+                        <!-- <div>
+                        <div class="slider-img">
+                            <img src="https://webtechball.files.wordpress.com/2017/09/slider-img-3.jpg" alt="Slide 2" />
+                        </div>
+                        <div class="slider-text">
+                            <h3>Slide Two</h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                        </div>
+                        </div>
+                        <div>
+                        <div class="slider-img">
+                            <img src="https://webtechball.files.wordpress.com/2017/09/slider-img-2.jpg" alt="Slide 3" />
+                        </div>
+                        <div class="slider-text">
+                            <h3>Slide Three</h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                        </div> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+
+            <!-- <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <<?php 
                         $i = 0;
@@ -11,6 +56,10 @@
                         ?>
                             <div class="carousel-item <?= $i === 0 ? 'active' : ''; ?>">
                                 <img src="<?= esc($item->file_path); ?>" class="d-block w-100" alt="News 1">
+                                <div class="carousel-caption d-none d-lg-block">
+                                    <span class="badge bg-primary fs-1 mb-1"><?= esc($item->title); ?></span>
+                                    <h4><?= esc($item->content); ?></h4>
+                                </div>
                             </div>
                     <?php  
                                 $i++;   
@@ -26,10 +75,13 @@
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
-            </div>
+            </div> -->
+        
+            
+
         </div>
 
-        <div class="col-lg-4 bg-white">
+        <div class="col-lg-3 bg-white">
             <div class="badge-title mt-3 mt-md-0">
                 <a href="" class="text-decoration-none fs-4"><?= trans("post_new"); ?></a>
             </div>
@@ -71,8 +123,8 @@
             <?php foreach( $categoryModelShowAtHomes as $item): 
                 $imgBaseURL = getBaseURLByStorage($item->storage);
                 ?>
-                <div class="col-md-6 mb-3">
-                    <div class="section-title-holder clearfix pattern-light">
+                <div class="col-md-6 mb-4">
+                    <div class="section-title-holder clearfix pattern-light mb-1">
                         <span class="st-title cursor-pointer" routerLink="/post/list">
                         <?= esc($item->name); ?>
                         </span>
@@ -80,65 +132,44 @@
 
                     <div class="row g-4">
                         <div class="col-12">
-                            <div class="card rounded-0">
+                            <div class="card rounded-0 position-relative">
                                 <img src="<?= esc($item->file_path); ?>" class="card-img-top rounded-0" alt="Post Image">
-                                <div class="card-body pb-0">
-                                <?php
-                                    $postItems = getPostByCategoryId($item->id);
-                                    if (!empty($postItems)):
-                                        $mainPostItems= $postItems[0];
-                                ?>
-                                    <h5 class="card-title cursor-pointer hover-primary text-capitalize">
-                                        <a class="text-decoration-none text-dark cursor-pointer hover-primary text-capitalize" 
-                                            href="<?= generatePostURL($mainPostItems); ?>" <?php postURLNewTab($mainPostItems); ?>>
-                                            <?= esc(characterLimiter($mainPostItems->title, 80, '...')); ?>
-                                        </a>
-                                    </h5>
-                                    <p class="text-muted font-size-8">
-                                        <i class="bi bi-calendar text-primary"></i> <?= formatDateFront($mainPostItems->created_at); ?>
-                                    </p>
+                                <div class="card-img-overlay d-flex flex-column justify-content-end p-3">
+                                    <div class="custom-overlay p-3 px-0">
+                                        <?php
+                                            $postItems = getPostByCategoryId($item->id);
+                                            $sumView = getPageViewsSumByCategory($item->id);
 
-                                    <?php 
-                                    endif;
-                                    ?>
-                                </div>
-                                <div
-                                    class="card-footer bg-primary text-white d-flex justify-content-between align-items-center rounded-0 py-1 font-size-8">
-                                    <div>
-                                        <i class="bi bi-eye"></i> 16313 Views
-                                    </div>
-                                    <a href="#" class="text-white text-decoration-none">Read More <i
-                                            class="bi bi-arrow-right"></i></a>
-                                </div>
-                            </div>
-
-                            <div class=" rounded-0">
-                                <ul class="list-group rounded-0">
-                                <?php
-                                    $i = 0;
-                                    if (!empty($postItems)):
-                                        foreach ($postItems as $item):
-                                            if ($i >= 1 && $i <= 5):
-                                ?>
-                                            <li class="list-group-item d-flex">
-                                                <div class="">
-                                                    <a href="<?= generatePostURL($item); ?>" <?php postURLNewTab($item); ?>
-                                                        class="text-dark text-decoration-none hover-svg">
-                                                        <?= esc(characterLimiter($item->title, 80, '...')); ?>
+                                            if (!empty($postItems)):
+                                                $i = 0;
+                                                foreach ($postItems as $postItem):
+                                                    if ($i <= 2):
+                                        ?>
+                                            <div class="post-item border-bottom">
+                                                <h5 class="card-title text-white mb-0">
+                                                    <a class="text-decoration-none text-light hover-primary" 
+                                                    href="<?= generatePostURL($postItem); ?>" <?php postURLNewTab($postItem); ?>>
+                                                        <?= esc(characterLimiter($postItem->title, 80, '...')); ?>
                                                     </a>
-                                                    <p class="mb-0 text-muted font-size-8">
-                                                        <i class="bi bi-calendar text-primary"></i>
-                                                        <?= formatDateFront($item->created_at); ?>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                <?php      
+                                                </h5>
+                                                <p class="text-white mb-1 small">
+                                                    <i class="bi bi-calendar text-light"></i> <?= formatDateFront($postItem->created_at); ?>
+                                                </p>
+                                            </div>
+                                        <?php 
+                                                    endif;
+                                                    $i++;
+                                                endforeach;
                                             endif;
-                                        $i++;
-                                        endforeach;
-                                    endif;
-                                ?>
-                                </ul>
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-primary text-white d-flex justify-content-between align-items-center rounded-0 py-1">
+                                    <div>
+                                        <i class="bi bi-eye"></i> <?= esc($sumView->pageviews ?? 0); ?> Lượt xem
+                                    </div>
+                                    <a href="<?= generateCategoryURL($item); ?>" class="text-white text-decoration-none">Xem thêm <i class="bi bi-arrow-right"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>

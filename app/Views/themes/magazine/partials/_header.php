@@ -78,6 +78,10 @@
 
     <link href="<?= base_url('assets/vendor/scss/style.css'); ?>" rel="stylesheet">
 
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.0.0-beta.2.4/assets/owl.carousel.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
     <?= loadView('partials/_css_js_header'); ?>
     <?= $generalSettings->custom_header_codes; ?>
 </head>

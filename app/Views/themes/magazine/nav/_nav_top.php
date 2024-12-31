@@ -6,7 +6,7 @@ $itemsMegaMenu = array(); ?>
 <div class="container d-flex justify-content-between align-items-center py-3 border-bottom">
     <a href="<?= langBaseUrl(); ?>" class="d-block">
         <img src="<?= $darkMode == 1 ? getLogoFooter() : getLogo(); ?>" alt="UniPresident Logo"
-            style="max-height: 60px;">
+            style="max-height: 90px;">
     </a>
     <div class="advertise-banner d-none d-md-block">
     </div>
@@ -22,7 +22,7 @@ $itemsMegaMenu = array(); ?>
                 <ul class="navbar-nav">
                     <?php if ($generalSettings->show_home_link == 1): ?>
                         <li class="nav-item text-center">
-                            <a class="nav-link cursor-pointer <?= uri_string() == '' ? 'active' : ''; ?>"
+                            <a class="nav-link cursor-pointer fs-5 <?= uri_string() == '' ? 'active' : ''; ?>"
                                 href="<?= langBaseUrl(); ?>"><?= trans("home"); ?> </a>
                         </li>
                     <?php endif; ?>
@@ -173,7 +173,7 @@ $itemsMegaMenu = array(); ?>
         </div>
 
         <?php if ($generalSettings->multilingual_system == 1 && countItems($activeLanguages) > 1): ?>
-            <div class="dropdown ms-auto">
+            <!-- <div class="dropdown ms-auto">
                 <a class="dropdown-toggle text-light text-decoration-none" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="me-1"><i class="bi bi-globe"></i> <?= esc($activeLang->name); ?></span>
                 </a>
@@ -186,7 +186,38 @@ $itemsMegaMenu = array(); ?>
                         <li><a class="dropdown-item" href="<?= $langURL; ?>"><?= esc($language->name); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
+            </div> -->
+            <div class="nav-item dropdown ms-auto">
+                <a class="dropdown-toggle text-light text-decoration-none d-flex align-items-center" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex align-items-center gap-2">
+                    <img
+                        src="<?= base_url('assets/img/flag_placeholder.png'); ?>"
+                        class="flag flag-<?= strtolower($activeLang->short_form); ?>"
+                        style="width: 18px;" />
+                        <div class="font-medium"><?= esc($activeLang->name); ?></div>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                    <?php foreach ($activeLanguages as $language):
+                        $langURL = base_url($language->short_form . "/");
+                        if ($language->id == $generalSettings->site_lang):
+                            $langURL = base_url();
+                        endif; ?>
+                        <li>
+                            <a class="dropdown-item" href="<?= $langURL; ?>">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img
+                                        src="<?= base_url('assets/img/flag_placeholder.png'); ?>"
+                                        class="flag flag-<?= strtolower($language->short_form); ?>"
+                                        style="width: 18px;" />
+                                    <div class="font-medium"><?= esc($language->name); ?></div>
+                                </div>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
+
         <?php endif; ?>
     </div>
 </nav>

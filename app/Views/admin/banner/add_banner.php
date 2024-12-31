@@ -27,6 +27,17 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label><?= trans("title"); ?></label>
+                        <input type="text" class="form-control" name="title" placeholder="<?= trans("title"); ?>" maxlength="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label><?= trans("content"); ?></label>
+                        <textarea class="form-control" name="content"></textarea>
+                    </div>
+
                     <div class="form-group">
                         <label><?= trans("sort"); ?></label>
                         <input type="number" class="form-control" name="sort" placeholder="<?= trans('sort'); ?>" value="1" min="1" max="3000" >

@@ -203,6 +203,15 @@ class PostModel extends BaseModel
         return $this->builder->where('tags.tag_slug', cleanStr($tagSlug))->countAllResults();
     }
 
+    public function getPageViewsSumByCategory($categoryId)
+    {
+        $this->builder = $this->db->table('posts');
+        return $this->builder
+            ->selectSum('posts.pageviews')
+            ->where('posts.category_id', cleanNumber($categoryId))
+            ->get()->getRow();
+    }
+
     //get search posts count
     public function getSearchPostsCount($q, $searchInContent)
     {
