@@ -41,10 +41,11 @@ $itemsMegaMenu = array(); ?>
                             ):
                                 if ($i < $menuLimit):
                                     $subLinks = getSubMenuLinks($baseMenuLinks, $item->item_id, $item->item_type);
-                    
+                                    
                                     if ($item->item_type == "category"):
                                         $category = getCategory($item->item_id, $baseCategories);
                                         $subCategories = getSubcategories($category->id, $baseCategories);
+
                                         if (!empty($category)):
                                             $isActiveCategory = false;
                                             if (!empty($subCategories)): 
@@ -57,23 +58,29 @@ $itemsMegaMenu = array(); ?>
                                             ?>
                                                 <li class="nav-item text-center dropdown nav-item-category-<?= $category->id; ?>"
                                                     data-category-id="<?= $category->id; ?>">
-                                                    <a class="nav-link dropdown-toggle nav-item-category-<?= $category->id; ?> <?= $isActiveCategory ? 'active' : ''; ?>"
-                                                        href="<?= generateMenuItemURL($item, $baseCategories); ?>" id="drp1-<?= $category->id; ?>"
-                                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <a class="nav-link dropdown-toggle nav-item-category-<?= $category->id; ?> <?= $isActiveCategory ? 'active' : ''; ?> fs-5"
+                                                        href="<?= generateMenuItemURL($item, $baseCategories); ?>" 
+                                                        id="drp1-<?= $category->id; ?>"
+                                                        role="button" aria-expanded="false">
                                                         <?= esc($category->name); ?>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="drp1-<?= $category->id; ?>">
                                                         <?php foreach ($subCategories as $subMenu): ?>
-                                                            <li><a class="dropdown-item"
-                                                                    href="<?= generateCategoryURL($subMenu); ?>"><?= esc($subMenu->name); ?></a></li>
-                                                        <?php endforeach ?>
+                                                            <li>
+                                                                <a class="dropdown-item fs-5"
+                                                                href="<?= !empty($subMenu->title_slug) ? generatePostURL($subMenu) : generateCategoryURL($subMenu); ?>">
+                                                                    <?= esc($subMenu->name); ?>
+                                                                </a>
+                                                            </li>
+                                                        <?php endforeach; ?>
                                                     </ul>
                                                 </li>
-                                                <?php
+
+                                            <?php
                                             else:
-                                                ?>
+                                            ?>
                                                 <li class="nav-item text-center">
-                                                    <a class="nav-link cursor-pointer <?= uri_string() == $item->item_slug ? 'active' : ''; ?>"
+                                                    <a class="nav-link cursor-pointer <?= uri_string() == $item->item_slug ? 'active' : ''; ?> fs-5"
                                                         href="<?= generateMenuItemURL($item, $baseCategories); ?>"><?= esc($category->name); ?></a>
                                                 </li>
                                                 <?php
@@ -86,7 +93,7 @@ $itemsMegaMenu = array(); ?>
                                         if (!empty($subLinks)): ?>
                                             <li class="nav-item text-center dropdown nav-item-category-<?= $item->item_id; ?>"
                                                 data-category-id="<?= $item->item_id; ?>">
-                                                <a class="nav-link dropdown-toggle" href="<?= generateMenuItemURL($item, $baseCategories); ?>"
+                                                <a class="nav-link dropdown-toggle" href="<?= generateMenuItemURL($item, $baseCategories); ?> fs-5"
                                                     id="drp2-<?= $item->item_id; ?>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <?= esc($item->item_name); ?>
                                                 </a>
@@ -104,7 +111,7 @@ $itemsMegaMenu = array(); ?>
                                             </li>
                                         <?php else: ?>
                                             <li class="nav-item">
-                                                <a href="<?= generateMenuItemURL($item, $baseCategories); ?>"
+                                                <a href="<?= generateMenuItemURL($item, $baseCategories); ?> fs-5"
                                                     class="nav-link <?= uri_string() == $item->item_slug ? 'active' : ''; ?>">
                                                     <?= esc($item->item_name); ?>
                                                 </a>
@@ -121,7 +128,7 @@ $itemsMegaMenu = array(); ?>
 
                     if ($totalItem >= $menuLimit): ?>
                         <li class="nav-item nav-item-more text-center dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="drp-more" role="button" data-bs-toggle="dropdown"
+                            <a class="nav-link dropdown-toggle fs-5" href="#" id="drp-more" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 <?= trans("more"); ?>
                             </a>
@@ -135,7 +142,7 @@ $itemsMegaMenu = array(); ?>
                                                 $subLinks = getSubMenuLinks($baseMenuLinks, $item->item_id, $item->item_type);
                                                 if (!empty($subLinks)): ?>
                                                     <li class="dropend nav-dropend">
-                                                        <a class="dropdown-item dropdown-toggle" <?= generateMenuItemURL($item, $baseCategories); ?>
+                                                        <a class="dropdown-item dropdown-toggle fs-5" <?= generateMenuItemURL($item, $baseCategories); ?>
                                                             id="dropend-<?= $item->item_id; ?>" role="button" data-bs-toggle="dropdown"
                                                             aria-expanded="false">
                                                             <?= esc($item->item_name); ?>
@@ -155,7 +162,7 @@ $itemsMegaMenu = array(); ?>
                                                     </li>
                                                 <?php else: ?>
                                                     <li>
-                                                        <a href="<?= generateMenuItemURL($item, $baseCategories); ?>" class="dropdown-item">
+                                                        <a href="<?= generateMenuItemURL($item, $baseCategories); ?>" class="dropdown-item fs-5">
                                                             <?= esc($item->item_name); ?>
                                                         </a>
                                                     </li>
@@ -173,27 +180,13 @@ $itemsMegaMenu = array(); ?>
         </div>
 
         <?php if ($generalSettings->multilingual_system == 1 && countItems($activeLanguages) > 1): ?>
-            <!-- <div class="dropdown ms-auto">
-                <a class="dropdown-toggle text-light text-decoration-none" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="me-1"><i class="bi bi-globe"></i> <?= esc($activeLang->name); ?></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                    <?php foreach ($activeLanguages as $language):
-                        $langURL = base_url($language->short_form . "/");
-                        if ($language->id == $generalSettings->site_lang):
-                            $langURL = base_url();
-                        endif; ?>
-                        <li><a class="dropdown-item" href="<?= $langURL; ?>"><?= esc($language->name); ?></a></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div> -->
             <div class="nav-item dropdown ms-auto">
-                <a class="dropdown-toggle text-light text-decoration-none d-flex align-items-center" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="dropdown-toggle text-light text-decoration-none d-flex align-items-center fs-5" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="d-flex align-items-center gap-2">
                     <img
                         src="<?= base_url('assets/img/flag_placeholder.png'); ?>"
                         class="flag flag-<?= strtolower($activeLang->short_form); ?>"
-                        style="width: 18px;" />
+                        style="width: 25px;" />
                         <div class="font-medium"><?= esc($activeLang->name); ?></div>
                     </div>
                 </a>

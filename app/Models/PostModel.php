@@ -75,6 +75,26 @@ class PostModel extends BaseModel
         return $this->builder->orderBy('posts.created_at DESC, id DESC')->limit(cleanNumber($limit))->get()->getResult();
     }
 
+    public function getPostsByLang($langId)
+    {
+        $this->buildQuery();
+        return $this->builder
+        ->where("posts.lang_id", cleanNumber($langId))    
+        ->orderBy('posts.created_at DESC, id DESC')->get()->getResult();
+    }
+
+    public function getPostsByLang2($langId)
+    {
+        return $this->builder
+            ->select('pd.*, p.*') 
+            ->from('post_definition pd') 
+            ->join('posts p', 'pd.id = p.definition_id') 
+            ->where('p.lang_id', cleanNumber($langId)) 
+            ->orderBy('p.created_at DESC, p.id DESC') 
+            ->get()
+            ->getResult(); // Lấy kết quả
+    }
+
     //get slider posts
     public function getSliderPosts()
     {
@@ -105,6 +125,15 @@ class PostModel extends BaseModel
     {
         $this->buildQuery();
         $this->builder->where('posts.category_id', $categoryId);
+        $this->builder->orderBy('posts.created_at DESC');
+        return $this->builder->get(10)->getResult();
+    }
+
+    public function getMenuPosts($categoryId)
+    {
+        $this->buildQuery();
+        $this->builder->where('posts.category_id', $categoryId);
+        $this->builder->where('posts.show_on_menu', 1);
         $this->builder->orderBy('posts.created_at DESC');
         return $this->builder->get(10)->getResult();
     }

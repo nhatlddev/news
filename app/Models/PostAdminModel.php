@@ -9,6 +9,10 @@ class PostAdminModel extends BaseModel
     protected $builderPostFiles;
     protected $builderPostAudios;
 
+    protected $builderDefinition;
+
+    protected $builderCategoryDefinition;
+
     public function __construct()
     {
         parent::__construct();
@@ -16,6 +20,8 @@ class PostAdminModel extends BaseModel
         $this->builderPostImages = $this->db->table('post_images');
         $this->builderPostFiles = $this->db->table('post_files');
         $this->builderPostAudios = $this->db->table('post_audios');
+        $this->builderDefinition = $this->db->table('post_definition');
+        $this->builderCategoryDefinition = $this->db->table('category_definition');
     }
 
     //input values
@@ -41,6 +47,143 @@ class PostAdminModel extends BaseModel
         ];
     }
 
+    public function getPostsByTitle($searchQuery)
+    {
+        return $this->builder
+            ->select('posts.id, posts.title')
+            ->like('posts.title', $searchQuery)
+            ->orderBy('posts.created_at', 'DESC')
+            ->get()
+            ->getResult();
+    }
+
+    public function getTopPosts($limit = 10)
+    {
+        return $this->builder
+            ->select('posts.id, posts.title')
+            ->orderBy('posts.created_at', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->getResult();
+    }
+
+    public function getPostsByTitle2($searchQuery, $langId)
+    {
+        return $this->builder
+            ->select('posts.id, posts.title, posts.definition_id')
+            ->like('posts.title', $searchQuery)
+            ->where('posts.lang_id', cleanNumber($langId))
+            ->orderBy('posts.created_at', 'DESC')
+            ->get()
+            ->getResult();
+    }
+
+    public function getTopPosts2($limit = 10, $langId)
+    {
+        return $this->builder
+            ->select('posts.id, posts.title, posts.definition_id')
+            ->where('posts.lang_id', cleanNumber($langId))
+            ->orderBy('posts.created_at', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->getResult();
+    }
+
+    public function addPostDefinition($postDefinitionData) {
+        $this->builderDefinition->insert($postDefinitionData);
+        return $this->db->insertID();
+    }
+
+    public function addPost2($postData) {
+        $data = [];
+        
+        if (empty($postData['date_published'])) {
+            $data['created_at'] = date('Y-m-d H:i:s');
+        } else {
+            $data['created_at'] = $postData['date_published'];
+        }
+
+        $data['title'] = $postData['title'];
+        $data['definition_id'] = $postData['post_definition_id'];
+        $data['is_featured'] = $postData['is_featured'];
+        $data['lang_id'] = $postData['lang_id'];
+        $data['post_type'] = 'article';
+        $data['content'] = $postData['content'];
+        if(!empty($postData['subcategory_id']) && $postData['subcategory_id'] != "0") {
+            $data['category_id'] = $postData['subcategory_id'];
+        } else {
+            $data['category_id'] = $postData['category_id'];
+        }
+        
+        $data['user_id'] = user()->id;
+        $data['visibility'] = $postData['visibility'];
+
+        if(empty($postData['slug'])) {
+            $data['title_slug'] = $postData['title'];
+        } else {
+            $data['title_slug'] = $postData['slug'];
+        }
+
+        if (empty($postData['slug'])) {
+            $data['title_slug'] = strSlug($data['title']);
+        } else {
+            $data['title_slug'] = removeSpecialCharacters($postData['slug'], true);
+            if (!empty($data['title_slug'])) {
+                $data['title_slug'] = str_replace(' ', '-', $data['title_slug']);
+            }
+        }
+        
+        $data['show_post_url'] = 0;
+        $data['status'] = 1;
+        $data['show_right_column'] = 0;
+        $data['is_breaking'] = 0;
+
+        $postImageId = $postData['post_image_id'];
+        if (!empty($postImageId)) {
+            $fileModel = new FileModel();
+            $image = $fileModel->getImage($postImageId);
+            if (!empty($image)) {
+                $data['image_big'] = $image->image_big;
+                $data['image_default'] = $image->image_default;
+                $data['image_slider'] = $image->image_slider;
+                $data['image_mid'] = $image->image_mid;
+                $data['image_small'] = $image->image_small;
+                $data['image_mime'] = $image->image_mime;
+                if ($image->storage == 'aws_s3') {
+                    $data['image_storage'] = 'aws_s3';
+                }
+            }
+        }
+        if (!empty($postData['image_url'])) {
+            $data['image_url'] = $postData['image_url'];
+        }
+
+        if ($this->builder->insert($data)) {
+            $postId = $this->db->insertID();
+            if(!empty($postId)) {
+                $this->updateSlug($postId);
+
+                $fileIds = $postData['selected_files'];
+                if (!empty($fileIds)) {
+                    foreach ($fileIds as $fileId) {
+                        $fileModel = new FileModel();
+                        $file = $fileModel->getFile($fileId);
+                        if (!empty($file)) {
+                            $item = [
+                                'post_id' => $postId,
+                                'file_id' => $file->id
+                            ];
+                            $this->builderPostFiles->insert($item);
+                        }
+                    }
+                }
+
+                $tagModel = new TagModel();
+                $tagModel->addPostTags($postId, $postData['tags']);
+            }
+        }
+    }
+
     //add post
     public function addPost($postType)
     {
@@ -61,11 +204,12 @@ class PostAdminModel extends BaseModel
         $data['user_id'] = user()->id;
         $data['status'] = inputPost('status');
         if (empty($data['status'])) {
-            $data['status'] = 0;
+            $data['status'] = 1;
         }
         if (empty($data['show_right_column'])) {
             $data['show_right_column'] = 0;
         }
+        $data['is_breaking'] = 0;
         //add post image
         $data['image_big'] = '';
         $data['image_default'] = '';
@@ -101,6 +245,91 @@ class PostAdminModel extends BaseModel
             return $this->db->insertID();
         }
         return false;
+    }
+
+    public function editPost2($data) {
+        foreach ($data['posts'] as $postData) {
+            $post = $this->getPost($postData['post_id']);
+
+            $dataToUpdate = [];
+            $dataToUpdate['created_at'] = !empty($postData['date_published']) 
+                ? $postData['date_published'] 
+                : date('Y-m-d H:i:s');
+            $dataToUpdate['title'] = $postData['title'] ?? '';
+            $dataToUpdate['is_featured'] = $postData['is_featured'];
+            $dataToUpdate['lang_id'] = $postData['lang_id'] ?? 1; 
+            $dataToUpdate['post_type'] = 'article';
+            $dataToUpdate['content'] = $postData['content'] ?? '';
+            $dataToUpdate['definition_id'] = $post->definition_id ?? 0;
+
+            $dataToUpdate['category_id'] = (!empty($postData['subcategory_id']) && $postData['subcategory_id'] != "0")
+            ? $postData['subcategory_id']
+            : $postData['category_id'];
+
+            $dataToUpdate['user_id'] = user()->id;
+            $dataToUpdate['visibility'] = $postData['visibility'] ?? 1;
+
+            $dataToUpdate['title_slug'] = empty($postData['slug'])
+            ? strSlug($postData['title'])
+            : str_replace(' ', '-', removeSpecialCharacters($postData['slug'], true));
+
+            $dataToUpdate['show_post_url'] = 0;
+            $dataToUpdate['status'] = 1;
+            $dataToUpdate['show_right_column'] = 0;
+            $dataToUpdate['is_breaking'] = 0;
+
+            $postImageId = $postData['post_image_id'];
+            if (!empty($postImageId)) {
+                $fileModel = new FileModel();
+                $image = $fileModel->getImage($postImageId);
+                if (!empty($image)) {
+                    $dataToUpdate['image_big'] = $image->image_big;
+                    $dataToUpdate['image_default'] = $image->image_default;
+                    $dataToUpdate['image_slider'] = $image->image_slider;
+                    $dataToUpdate['image_mid'] = $image->image_mid;
+                    $dataToUpdate['image_small'] = $image->image_small;
+                    $dataToUpdate['image_mime'] = $image->image_mime;
+                    $dataToUpdate['image_url'] = '';
+                    if ($image->storage == 'aws_s3') {
+                        $dataToUpdate['image_storage'] = 'aws_s3';
+                    }
+                }
+            }
+
+            if (!empty($postData['image_url'])) {
+                $dataToUpdate['image_url'] = $postData['image_url'];
+                $dataToUpdate['image_big'] = '';
+                $dataToUpdate['image_default'] = '';
+                $dataToUpdate['image_slider'] = '';
+                $dataToUpdate['image_mid'] = '';
+                $dataToUpdate['image_small'] = '';
+                $dataToUpdate['image_mime'] = 'jpg';
+                $dataToUpdate['image_storage'] = '';
+            }
+
+            $this->builder->set($dataToUpdate)->where('id', $postData['post_id'])->update();
+
+            $this->updateSlug($postData['post_id']);
+
+            $fileIds = $postData['selected_files'];
+            if (!empty($fileIds)) {
+                foreach ($fileIds as $fileId) {
+                    $fileModel = new FileModel();
+                    $file = $fileModel->getFile($fileId);
+                    if (!empty($file)) {
+                        $item = [
+                            'post_id' => $postData['post_id'],
+                            'file_id' => $file->id
+                        ];
+                        $this->builderPostFiles->insert($item);
+                    }
+                }
+            }
+
+            $tagModel = new TagModel();
+            $tagModel->addPostTags($postData['post_id'], $postData['tags']);
+            // $this->builder->where('id', $postData['post_id'])->update($data);
+        }
     }
 
     //update post
@@ -233,6 +462,16 @@ class PostAdminModel extends BaseModel
         return $this->builder->where('id', cleanNumber($id))->get()->getRow();
     }
 
+    public function getPostsByDefinition($id)
+    {
+        return $this->builder->where('definition_id', cleanNumber($id))->get()->getResultArray();
+    }
+
+    public function getPostDefinition($id)
+    {
+        return $this->builderDefinition->where('id', cleanNumber($id))->get()->getRow();
+    }
+
     //get posts count
     public function getPostsCount($list = null)
     {
@@ -246,6 +485,7 @@ class PostAdminModel extends BaseModel
         $this->filterPosts($list);
         return $this->builder->where('posts.visibility', 1)->where('posts.status', 1)->where('posts.is_scheduled', 0)->orderBy('created_at DESC')->limit($perPage, $offset)->get()->getResult();
     }
+
 
     public function getTotalPostView()
     {
@@ -298,6 +538,10 @@ class PostAdminModel extends BaseModel
     public function filterPosts($list = null)
     {
         $langId = cleanNumber(inputGet('lang_id'));
+        if(empty(($langId))) {
+            $langId = $this->activeLang->id;
+        }
+
         $postType = cleanStr(inputGet('post_type'));
         $user = cleanNumber(inputGet('user'));
         $category = cleanNumber(inputGet('category'));
@@ -517,31 +761,38 @@ class PostAdminModel extends BaseModel
     //delete post
     public function deletePost($id)
     {
-        $post = $this->getPost($id);
-        if (!empty($post)) {
-            if (!checkPostOwnership($post->user_id)) {
-                return false;
+        $postDefinition = $this->getPostDefinition($id);
+        if(!empty($postDefinition)) {
+            $posts = $this->getPostsByDefinition($postDefinition->id);
+            if (!empty($posts)) {
+                foreach ($posts as $post) {
+                    if (!checkPostOwnership($post['user_id'])) {
+                        return false;
+                    }
+                    //delete additional images
+                    $this->deleteAdditionalImages($post['id']);
+                    //delete audios
+                    $this->deletePostAudios($post['id']);
+                    //delete list items
+                    $postItemModel = new PostItemModel();
+                    $postItemModel->deletePostListItems($post['id'], 'gallery');
+                    $postItemModel->deletePostListItems($post['id'], 'sorted_list');
+                    //delete quiz questions
+                    $quizModel = new QuizModel();
+                    $quizModel->deleteQuizQuestions($post['id']);
+                    $quizModel->deleteQuizResults($post['id']);
+                    //delete post tags
+                    $tagModel = new TagModel();
+                    $tagModel->deletePostTags($post['id']);
+                    //delete comments
+                    $this->db->table('comments')->where('post_id', $post['id'])->delete();
+                    //delete post
+                    $this->builder->where('id', $post['id'])->delete();
+                }
+                return $this->builderDefinition->where('id', cleanNumber($postDefinition->id))->delete();
             }
-            //delete additional images
-            $this->deleteAdditionalImages($post->id);
-            //delete audios
-            $this->deletePostAudios($post->id);
-            //delete list items
-            $postItemModel = new PostItemModel();
-            $postItemModel->deletePostListItems($post->id, 'gallery');
-            $postItemModel->deletePostListItems($post->id, 'sorted_list');
-            //delete quiz questions
-            $quizModel = new QuizModel();
-            $quizModel->deleteQuizQuestions($post->id);
-            $quizModel->deleteQuizResults($post->id);
-            //delete post tags
-            $tagModel = new TagModel();
-            $tagModel->deletePostTags($post->id);
-            //delete comments
-            $this->db->table('comments')->where('post_id', $post->id)->delete();
-            //delete post
-            return $this->builder->where('id', $post->id)->delete();
         }
+        
         return false;
     }
 
@@ -634,6 +885,28 @@ class PostAdminModel extends BaseModel
     public function getAdditionalImages($postId)
     {
         return $this->builderPostImages->where('post_id', cleanNumber($postId))->get()->getResult();
+    }
+
+    public function getSelectedPostCategory($categoryId)
+    {
+        return $this->builder
+        ->select('categories.id as category_id, categories.name as category_name, posts.id as post_id, posts.title as post_title')
+        ->join('categories', 'categories.post_id = posts.id') 
+        ->where('categories.id', cleanNumber($categoryId)) 
+        ->get()
+        ->getRow();
+    }
+
+    public function getSelectedPostCategoryByDefinition($definitionId)
+    {
+        return $this->builderCategoryDefinition
+        ->select('p.id as post_id, p.title as post_title')
+        ->join('post_definition pd', 'category_definition.post_definition_id = pd.id') 
+        ->join('posts p', 'pd.id = p.definition_id') 
+        ->where('p.lang_id', cleanNumber($this->activeLang->id)) 
+        ->where('category_definition.id', cleanNumber($definitionId)) 
+        ->get()
+        ->getRow();
     }
 
     //get additional image

@@ -1,0 +1,26 @@
+ERROR - 2025-01-06 14:18:45 --> mysqli_sql_exception: Column 'category_order' cannot be null in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `ca...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ca...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ca...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ca...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\CategoryModel.php(122): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\CategoryController.php(93): App\Models\CategoryModel->addCategory2()
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\CategoryController->addCategoryPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\CategoryController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}
+ERROR - 2025-01-06 14:18:45 --> mysqli_sql_exception: Column 'category_order' cannot be null in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `ca...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ca...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ca...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ca...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\CategoryModel.php(122): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\CategoryController.php(93): App\Models\CategoryModel->addCategory2()
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\CategoryController->addCategoryPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\CategoryController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}

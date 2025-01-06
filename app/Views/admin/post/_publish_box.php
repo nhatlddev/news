@@ -16,7 +16,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group d-none">
+            <div class="form-group">
                 <div class="row">
                     <div class="col-sm-12">
                         <label><?= trans('date_publish'); ?></label>
@@ -36,7 +36,7 @@
                 <button type="submit" name="publish" value="0" class="btn btn-primary pull-right" onclick="allowSubmitForm = true;"><?= trans('save_changes'); ?></button>
             </div>
         <?php else: ?>
-            <div class="form-group d-none">
+            <!-- <div class="form-group">
                 <div class="row">
                     <div class="col-md-7 col-sm-12 col-xs-12">
                         <label class="control-label"><?= trans('scheduled_post'); ?></label>
@@ -45,8 +45,9 @@
                         <input type="checkbox" name="scheduled_post" value="1" id="cb_scheduled" class="square-purple">
                     </div>
                 </div>
-            </div>
-            <div id="date_published_content" class="form-group">
+            </div> -->
+            <!-- id="date_published_content" -->
+            <div  class="form-group">
                 <div class="row">
                     <div class="col-sm-12">
                         <label><?= trans('date_publish'); ?></label>

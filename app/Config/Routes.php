@@ -87,6 +87,7 @@ $routes->get($customRoutes->admin . '/edit-menu-link/(:num)', 'AdminController::
 $routes->get($customRoutes->admin . '/post-format', 'PostController::postFormat');
 $routes->get($customRoutes->admin . '/add-post', 'PostController::addPost');
 $routes->get($customRoutes->admin . '/posts', 'PostController::posts');
+$routes->get($customRoutes->admin . '/posts2', 'PostController::posts2');
 $routes->get($customRoutes->admin . '/slider-posts', 'PostController::sliderPosts');
 $routes->get($customRoutes->admin . '/featured-posts', 'PostController::featuredPosts');
 $routes->get($customRoutes->admin . '/breaking-news', 'PostController::breakingNews');
@@ -96,14 +97,24 @@ $routes->get($customRoutes->admin . '/scheduled-posts', 'PostController::schedul
 $routes->get($customRoutes->admin . '/drafts', 'PostController::drafts');
 $routes->get($customRoutes->admin . '/bulk-post-upload', 'PostController::bulkPostUpload');
 $routes->get($customRoutes->admin . '/edit-post/(:num)', 'PostController::editPost/$1');
+$routes->get($customRoutes->admin . '/posts/searchDropdown', 'PostController::searchDropdown');
+$routes->get($customRoutes->admin . '/posts/addPostPost2', 'PostController::addPostPost2');
+$routes->get($customRoutes->admin . '/edit-post2/(:num)', 'PostController::editPost2/$1');
+$routes->get($customRoutes->admin . '/posts/searchDropdown2', 'PostController::searchDropdown2');
+
 //rss feeds
 $routes->get($customRoutes->admin . '/feeds', 'RssController::feeds');
 $routes->get($customRoutes->admin . '/import-feed', 'RssController::importFeed');
 $routes->get($customRoutes->admin . '/edit-feed/(:num)', 'RssController::editFeed/$1');
 //categories
-$routes->get($customRoutes->admin . '/add-category', 'CategoryController::addCategory');
-$routes->get($customRoutes->admin . '/categories', 'CategoryController::categories');
-$routes->get($customRoutes->admin . '/edit-category/(:num)', 'CategoryController::editCategory/$1');
+$routes->get($customRoutes->admin . '/add-category', 'CategoryController::addCategory2');
+$routes->get($customRoutes->admin . '/categories', 'CategoryController::categories2');
+$routes->get($customRoutes->admin . '/edit-category/(:num)', 'CategoryController::editCategory2/$1');
+$routes->post($customRoutes->admin . '/categories/getSubCategories2', 'CategoryController::getSubCategories2');
+$routes->get($customRoutes->admin . '/add-category2', 'CategoryController::addCategory2');
+$routes->get($customRoutes->admin . '/categories2', 'CategoryController::categories2');
+$routes->get($customRoutes->admin . '/edit-category2/(:num)', 'CategoryController::editCategory2/$1');
+
 //widgets
 $routes->get($customRoutes->admin . '/widgets', 'AdminController::widgets');
 $routes->get($customRoutes->admin . '/add-widget', 'AdminController::addWidget');
@@ -168,6 +179,7 @@ $routes->get($customRoutes->admin . '/edit-translations/(:num)', 'LanguageContro
 $routes->get($customRoutes->admin . '/banners', 'BannerController::index');
 $routes->get($customRoutes->admin . '/banners/save', 'BannerController::addBanner');
 $routes->get($customRoutes->admin . '/banners/edit/(:num)', 'BannerController::editBanner/$1');
+
 
 /*
  * --------------------------------------------------------------------

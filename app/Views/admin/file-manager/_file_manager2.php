@@ -1,18 +1,19 @@
-<div id="file_manager" class="modal fade modal-file-manager" role="dialog">
+<?php foreach ($activeLanguages as $lang): ?>
+<div id="file_manager<?= $lang->id; ?>" class="modal fade modal-file-manager" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?= trans('files'); ?></h4>
+                <h4 class="modal-title"><?= trans('files'); ?> (Lang: <?= $lang->id; ?>)</h4>
                 <div class="file-manager-search">
-                    <input type="text" id="input_search_file" class="form-control" placeholder="<?= trans("search"); ?>">
+                    <input type="text" id="input_search_file<?= $lang->id; ?>" class="form-control" placeholder="<?= trans("search"); ?>">
                 </div>
             </div>
             <div class="modal-body">
                 <div class="file-manager">
                     <div class="file-manager-left">
                         <div class="dm-uploader-container">
-                            <div id="drag-and-drop-zone" class="dm-uploader text-center">
+                            <div id="drag-and-drop-zone<?= $lang->id; ?>" class="dm-uploader text-center">
                                 <?php if (!empty($generalSettings->allowed_file_extensions)):
                                     $exts = null;
                                     if (!empty($generalSettings->allowed_file_extensions)) {
@@ -40,8 +41,8 @@
                                 <a class='btn btn-md dm-btn-select-files'>
                                     <input type="file" name="file" size="40" multiple="multiple">
                                 </a>
-                                <ul class="dm-uploaded-files" id="files-file"></ul>
-                                <button type="button" id="btn_reset_upload" class="btn btn-reset-upload"><?= trans("reset"); ?></button>
+                                <ul class="dm-uploaded-files" id="files-file<?= $lang->id; ?>"></ul>
+                                <button type="button" id="btn_reset_upload<?= $lang->id; ?>" class="btn btn-reset-upload"><?= trans("reset"); ?></button>
                             </div>
                         </div>
                     </div>
@@ -49,7 +50,7 @@
                         <div class="file-manager-content">
                             <div class="col-sm-12">
                                 <div class="row">
-                                    <div id="file_upload_response">
+                                    <div id="file_upload_response<?= $lang->id; ?>">
                                         <?php foreach ($files as $file):
                                             if (!empty($file)): ?>
                                                 <div class="col-file-manager" id="file_col_id_<?= $file->id; ?>">
@@ -67,15 +68,15 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" id="selected_file_id">
-                    <input type="hidden" id="selected_file_name">
-                    <input type="hidden" id="selected_file_path">
+                    <input type="hidden" id="selected_file_id<?= $lang->id; ?>">
+                    <input type="hidden" id="selected_file_name<?= $lang->id; ?>">
+                    <input type="hidden" id="selected_file_path<?= $lang->id; ?>">
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="file-manager-footer">
-                    <button type="button" id="btn_file_delete" class="btn btn-danger pull-left btn-file-delete"><i class="fa fa-trash"></i>&nbsp;&nbsp;<?= trans('delete'); ?></button>
-                    <button type="button" id="btn_file_select" class="btn bg-olive btn-file-select"><i class="fa fa-check"></i>&nbsp;&nbsp;<?= trans('select_file'); ?></button>
+                    <button type="button" id="btn_file_delete<?= $lang->id; ?>" class="btn btn-danger pull-left btn-file-delete"><i class="fa fa-trash"></i>&nbsp;&nbsp;<?= trans('delete'); ?></button>
+                    <button type="button" id="btn_file_select<?= $lang->id; ?>" class="btn bg-olive btn-file-select"><i class="fa fa-check"></i>&nbsp;&nbsp;<?= trans('select_file'); ?></button>
                     <button type="button" class="btn btn-default" data-dismiss="modal"><?= trans('close'); ?></button>
                 </div>
             </div>
@@ -83,17 +84,7 @@
     </div>
 </div>
 
-<script type="text/html" id="files-template-file">
-    <li class="media">
-        <img class="preview-img" src="<?= base_url('assets/admin/plugins/file-manager/file.png'); ?>" alt="">
-        <div class="media-body">
-            <div class="progress">
-                <div class="dm-progress-waiting"><?= trans("waiting"); ?></div>
-                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-    </li>
-</script>
+<?php endforeach; ?>
 
 <?php $fileExtensions = '';
 $extArray = array();
@@ -110,9 +101,11 @@ if (!empty($extArray)) {
     $fileExtensions = json_encode($newArray);
 } ?>
 
+<script src="<?= base_url('assets/admin/plugins/file-uploader/js/jquery.dm-uploader.min.js'); ?>"></script>
 <script>
+    <?php foreach ($activeLanguages as $lang): ?>
     $(function () {
-        $('#drag-and-drop-zone').dmUploader({
+        $('#drag-and-drop-zone<?= $lang->id; ?>').dmUploader({
             url: '<?= base_url("FileController/uploadFile"); ?>',
             queue: true,
             extFilter: <?= $fileExtensions; ?>,
@@ -135,17 +128,17 @@ if (!empty($extArray)) {
                 $('#uploaderFile' + id + ' .dm-progress-waiting').hide();
                 ui_multi_update_file_progress(id, 0, '', true);
                 ui_multi_update_file_status(id, 'uploading', 'Uploading...');
-                $("#btn_reset_upload").show();
+                $("#btn_reset_upload<?= $lang->id; ?>").show();
             },
             onUploadProgress: function (id, percent) {
                 ui_multi_update_file_progress(id, percent);
             },
             onUploadSuccess: function (id, data) {
-                refresh_files();
+                refresh_files_<?= $lang->id; ?>();
                 document.getElementById("uploaderFile" + id).remove();
                 ui_multi_update_file_status(id, 'success', 'Upload Complete');
                 ui_multi_update_file_progress(id, 100, 'success', false);
-                $("#btn_reset_upload").hide();
+                $("#btn_reset_upload<?= $lang->id; ?>").hide();
             },
             onFileTypeError: function (file) {
                 swal({
@@ -164,26 +157,87 @@ if (!empty($extArray)) {
         });
     });
 
-    $(document).on('click', '#btn_reset_upload', function () {
-        $("#drag-and-drop-zone").dmUploader("reset");
-        $("#files-file").empty();
+    $(document).on('click', '#btn_reset_upload<?= $lang->id; ?>', function () {
+        $("#drag-and-drop-zone<?= $lang->id; ?>").dmUploader("reset");
+        $("#files-file<?= $lang->id; ?>").empty();
         $(this).hide();
     });
+
+    function refresh_files_<?= $lang->id; ?>() {
+        $.ajax({
+            type: "POST",
+            url: '<?= base_url("FileController/getFiles"); ?>',
+            success: function (response) {
+                $("#file_upload_response<?= $lang->id; ?>").html(response);
+            }
+        });
+    }
+    <?php endforeach; ?>
 </script>
 
+<script src="<?= base_url('assets/admin/js/jquery-ui.min.js'); ?>"></script>
+<script src="<?= base_url('assets/admin/plugins/file-uploader/js/jquery.dm-uploader.min.js'); ?>"></script>
+<script>
+    <?php foreach ($activeLanguages as $lang): ?>
+        $(document).on('click', '#file_manager<?= $lang->id; ?> .file-box', function () {
+        $('#file_manager<?= $lang->id; ?> .file-box').removeClass('selected');
+        $(this).addClass('selected');
+        var file_id = $(this).attr('data-file-id');
+        var file_name = $(this).attr('data-file-name');
+        $('#selected_file_id<?= $lang->id; ?>').val(file_id);
+        $('#selected_file_name<?= $lang->id; ?>').val(file_name);
+        $('#btn_file_delete<?= $lang->id; ?>').show();
+        $('#btn_file_select<?= $lang->id; ?>').show();
+    });
 
+        $(document).on('click', '#file_manager<?= $lang->id; ?> #btn_file_delete<?= $lang->id; ?>', function () {
+        var file_id = $('#selected_file_id<?= $lang->id; ?>').val();
+        $('#file_col_id_' + file_id).remove();
+        var data = {
+            "file_id": file_id
+        };
+        $.ajax({
+            type: "POST",
+            url: VrConfig.baseURL + "/FileController/deleteFile",
+            data: setAjaxData(data),
+            success: function (response) {
+                $('#btn_file_delete<?= $lang->id; ?>').hide();
+                $('#btn_file_select<?= $lang->id; ?>').hide();
+            }
+        });
+    });
 
+    //select file button
+    $(document).on('click', '#file_manager<?= $lang->id; ?> #btn_file_select<?= $lang->id; ?>', function () {
+        select_file<?= $lang->id; ?>();
+    });
 
+    //select file on double click
+    $(document).on('dblclick', '#file_manager<?= $lang->id; ?> .file-box', function () {
+        select_file<?= $lang->id; ?>();
+    });
 
+    function select_file<?= $lang->id; ?>() {
+        var file_id = $('#selected_file_id<?= $lang->id; ?>').val();
+        var file_name = $('#selected_file_name<?= $lang->id; ?>').val();
 
-
-
-
-
-
-
-
-
-
-
-
+        var file = '<div id="file_' + file_id + '" class="item">\n' +
+            '<input type="hidden" name="post_selected_file_id[]" value="' + file_id + '">\n' +
+            '<div class="left">\n' +
+            '<i class="fa fa-file"></i>\n' +
+            '</div>\n' +
+            '<div class="center">\n' +
+            '<span>' + file_name + '</span>\n' +
+            '</div>\n' +
+            '<div class="right">\n' +
+            '<a href="javascript:void(0)" class="btn btn-sm btn-selected-file-list-item btn-delete-selected-file" data-value="' + file_id + '"><i class="fa fa-times"></i></a></p>\n' +
+            '</div>\n' +
+            '</div>';
+        $('#post_selected_files<?= $lang->id; ?>').append(file);
+        $('#file_manager<?= $lang->id; ?>').modal('toggle');
+        $('#file_manager<?= $lang->id; ?> .file-box').removeClass('selected');
+        $('#btn_file_delete<?= $lang->id; ?>').hide();
+        $('#btn_file_select<?= $lang->id; ?>').hide();
+    }
+    <?php endforeach; ?>
+</script>

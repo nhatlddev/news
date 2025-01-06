@@ -26,11 +26,40 @@ class PostController extends BaseAdminController
         $this->categoryModel = new CategoryModel();
         $this->quizModel = new QuizModel();
         $this->authModel = new AuthModel();
+    
         if ($this->generalSettings->email_verification == 1 && user()->email_status == 0 && user()->role != 'admin') {
             $this->session->setFlashdata('error', trans("msg_confirmed_required"));
             redirectToUrl(langBaseUrl());
             exit();
         }
+    }
+
+    public function searchDropdown()
+    {
+        $query = $this->request->getGet('query');
+        $limit = $this->request->getGet('limit') ?: 10;
+
+        if (!empty($query)) {
+            $posts = $this->postAdminModel->getPostsByTitle($query);
+        } else {
+            $posts = $this->postAdminModel->getTopPosts($limit);
+        }
+
+        return $this->response->setJSON($posts);
+    }
+
+    public function searchDropdown2()
+    {
+        $query = $this->request->getGet('query');
+        $limit = $this->request->getGet('limit') ?: 10;
+
+        if (!empty($query)) {
+            $posts = $this->postAdminModel->getPostsByTitle2($query, $this->activeLang->id);
+        } else {
+            $posts = $this->postAdminModel->getTopPosts2($limit, $this->activeLang->id);
+        }
+
+        return $this->response->setJSON($posts);
     }
 
     /**
@@ -74,8 +103,29 @@ class PostController extends BaseAdminController
 
         echo view('admin/includes/_header', $data);
         // echo view('admin/post/' . $view, $data);
-        echo view('admin/post/add_article', $data);
+        // echo view('admin/post/add_article', $data);
+        echo view('admin/post/multiple_post/add_multiple_post', $data);
         echo view('admin/includes/_footer');
+    }
+
+    public function addPostPost2()
+    {
+        $data = $this->request->getJSON(true);
+        
+        $postDefinitionData = [
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        $postDefinitionId = $this->postAdminModel->addPostDefinition($postDefinitionData);
+
+
+        foreach ($data['posts'] as $postData) {
+            $postData['post_definition_id'] = $postDefinitionId;
+            $this->postAdminModel->addPost2($postData);
+        }
+
+        resetCacheDataOnChange();
+        return $this->response->setJSON(['success' => true, 'message' => trans("msg_added")]);
     }
 
     /**
@@ -183,6 +233,62 @@ class PostController extends BaseAdminController
         echo view('admin/includes/_footer');
     }
 
+    public function editPost2($id)
+    {
+        checkPermission('add_post');
+        $posts = $this->postAdminModel->getPostsByDefinition($id);
+        $data['posts'] = $posts;
+        if (empty($data['posts'])) {
+            return redirect()->to(adminUrl());
+        }
+        // if (!checkPostOwnership($data['post']->user_id)) {
+        //     return redirect()->to(adminUrl());
+        // }
+
+        $postDataByLang = [];
+        foreach ($posts as $post) {
+            $postDataByLang[$post['lang_id']] = $post;
+        }
+
+        $data['postDataByLang'] = $postDataByLang;
+
+        $data['title'] = 'Update post';
+        $tagModel = new TagModel();
+        $data['tags'] = $tagModel->getPostTagsString($id);
+        $data['postImages'] = $this->postAdminModel->getAdditionalImages($id);
+        $authModel = new AuthModel();
+        $data['users'] = $authModel->getActiveUsers();
+        $data['definition_id'] = $id;
+
+        //define category ids
+        $category = $this->categoryModel->getCategory($data['posts'][0]['category_id']);
+        $data['parentCategoryId'] = $data['posts'][0]['category_id'];
+        $data['subCategoryId'] = 0;
+        if (!empty($category) && $category->parent_id != 0) {
+            $parentCategory = $this->categoryModel->getCategory($category->parent_id);
+            if (!empty($parentCategory)) {
+                $data['parentCategoryId'] = $parentCategory->id;
+                $data['subCategoryId'] = $category->id;
+            }
+        }
+        $data['categories'] = $this->categoryModel->getParentCategories();
+        $data['subCategories'] = $this->categoryModel->getSubCategoriesByParentId($data['parentCategoryId']);
+        
+        echo view('admin/includes/_header', $data);
+        echo view('admin/post/multiple_post/edit_multiple_post', $data);
+        echo view('admin/includes/_footer');
+    }
+
+    public function editPostPost2()
+    {
+        $data = $this->request->getJSON(true);
+        $this->postAdminModel->editPost2($data);
+
+        resetCacheDataOnChange();
+
+        return $this->response->setJSON(['success' => true, 'message' => trans("msg_added")]);
+    }
+
     /**
      * Update Post Post
      */
@@ -257,7 +363,23 @@ class PostController extends BaseAdminController
         $data['posts'] = $this->postAdminModel->getPostsPaginated('posts', $this->perPage, $pager->offset);
 
         echo view('admin/includes/_header', $data);
-        echo view('admin/post/posts', $data);
+        echo view('admin/post/multiple_post/posts2', $data);
+        echo view('admin/includes/_footer');
+    }
+
+    public function posts2()
+    {
+        checkPermission('add_post');
+        $data['title'] = trans('posts');
+        $data['authors'] = $this->authModel->getUsersHavePosts();
+        $data['formAction'] = adminUrl('posts2');
+        $data['listType'] = 'posts';
+        $numRows = $this->postAdminModel->getPostsCount('posts');
+        $pager = paginate($this->perPage, $numRows);
+        $data['posts'] = $this->postAdminModel->getPostsPaginated('posts', $this->perPage, $pager->offset);
+
+        echo view('admin/includes/_header', $data);
+        echo view('admin/post/multiple_post/posts2', $data);
         echo view('admin/includes/_footer');
     }
 

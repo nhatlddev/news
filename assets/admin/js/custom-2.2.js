@@ -43,23 +43,27 @@ $('input[type="checkbox"].square-purple, input[type="radio"].square-purple').iCh
     radioClass: 'iradio_square-red',
     increaseArea: '20%'
 });
-$('#cb_scheduled').on('ifChecked', function () {
-    $("#date_published_content").show();
-    $("#input_date_published").prop('required', true);
-});
-$('#cb_scheduled').on('ifUnchecked', function () {
-    $("#date_published_content").hide();
-    $("#input_date_published").prop('required', false);
-});
+// $('#cb_scheduled').on('ifChecked', function () {
+//     $("#date_published_content").show();
+//     $("#input_date_published").prop('required', true);
+// });
+// $('#cb_scheduled').on('ifUnchecked', function () {
+//     $("#date_published_content").hide();
+//     $("#input_date_published").prop('required', false);
+// });
 
 $('#rb_show_at_homepage_1').on('ifChecked', function () {
     const showAtBodySortGroup = document.getElementById("show_at_body_sort_group");
     showAtBodySortGroup.style.display = "block";
+    const showAtBodySort = document.getElementById("show_at_body_sort");
+    showAtBodySort.setAttribute("required", "true");
 });
 
 $('#rb_show_at_homepage_2').on('ifChecked', function () {
     const showAtBodySortGroup = document.getElementById("show_at_body_sort_group");
     showAtBodySortGroup.style.display = "none";
+    const showAtBodySort = document.getElementById("show_at_body_sort");
+    showAtBodySort.removeAttribute("required");
 });
 
 //color picker with addon
@@ -68,7 +72,9 @@ $(".my-colorpicker").colorpicker();
 //datetimepicker
 $(function () {
     $('#datetimepicker').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm:ss'
+        format: 'YYYY-MM-DD HH:mm:ss',
+        defaultDate: new Date(),
+        useCurrent: true
     });
 });
 

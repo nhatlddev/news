@@ -3,6 +3,7 @@
         <?= view('admin/includes/_messages'); ?>
     </div>
 </div>
+
 <div class="row">
     <div class="col-lg-8 col-md-12">
         <div class="box box-primary">
@@ -72,6 +73,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label><?= trans('posts'); ?></label>
+                        <select id="post_id" class="form-control" name="post_id"  data-placeholder="<?= trans('none'); ?>">
+                            <option value=""><?= trans('none'); ?></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <div class="row">
                             <div class="col-sm-5 col-xs-12">
                                 <label><?= trans('show_on_menu'); ?></label>
@@ -120,7 +128,7 @@
 
                     <div class="form-group" id="show_at_body_sort_group">
                         <label><?= trans("show_at_body_sort"); ?></label>
-                        <input type="number" class="form-control" name="show_at_body_sort" placeholder="<?= trans('show_at_body_sort'); ?>" value="1" min="1" max="3000">
+                        <input id="show_at_body_sort" type="number" class="form-control" name="show_at_body_sort" placeholder="<?= trans('show_at_body_sort'); ?>" value="1" min="0" max="3000">
                     </div>
 
                     <div class="form-group">
@@ -238,3 +246,37 @@
         }
     }
 </script>
+
+<script>
+    $(document).ready(function () {
+        // Initialize Select2
+        $('#post_id').select2({
+            placeholder: "<?= trans('search_posts'); ?>",
+            allowClear: true,
+            ajax: {
+                url: "<?= adminUrl('posts/searchDropdown'); ?>",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term || '',
+                        limit: 10 
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.title
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+    });
+</script>
+

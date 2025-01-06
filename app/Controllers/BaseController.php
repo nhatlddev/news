@@ -128,12 +128,10 @@ abstract class BaseController extends Controller
             $this->widgets = $this->settingsModel->getWidgetsByLang($this->activeLang->id);
             setCacheData('widgets', $this->widgets);
         }
-        // var_dump($this->widgets);
-        // echo $this->activeLang->id;
         //categories
         $this->categories = getCachedData('categories');
         if (empty($this->categories)) {
-            $this->categories = getCategoriesByLang($this->activeLang->id);
+            $this->categories = getCategoriesAndPostByLang($this->activeLang->id);
             setCacheData('categories', $this->categories);
         }
         //latest categories posts

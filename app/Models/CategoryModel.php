@@ -6,10 +6,13 @@ class CategoryModel extends BaseModel
 {
     protected $builder;
 
+    protected $builderDefinition;
+
     public function __construct()
     {
         parent::__construct();
         $this->builder = $this->db->table('categories');
+        $this->builderDefinition = $this->db->table('category_definition');
     }
 
     //input values
@@ -28,12 +31,104 @@ class CategoryModel extends BaseModel
             'show_on_menu' => inputPost('show_on_menu'),
             'block_type' => inputPost('block_type'),
             'show_at_footer' => inputPost('show_at_footer'),
-            'show_at_body_sort' => inputPost('show_at_body_sort')
+            'show_at_body_sort' => inputPost('show_at_body_sort'),
+            'post_id' => inputPost('post_id')
         ];
         if (empty($data['color'])) {
             $data['color'] = '#2d65fe';
         }
         return $data;
+    }
+
+    public function addCategory2() {
+        $data = $this->inputValues();
+
+        $CategoryDefinitionData = [
+            'created_at' => date('Y-m-d H:i:s'),
+            'post_definition_id' => !empty($data['post_id']) ? $data['post_id'] : null
+        ];
+
+        if($this->builderDefinition->insert($CategoryDefinitionData)) {
+            $definitionId = $this->db->insertID();
+
+            if(!empty($definitionId)) {
+                $saveData = [];
+                $saveData['definition_id'] = $definitionId;
+                $saveData['category_order'] = inputPost('category_order') ?? 0;
+                $saveData['show_on_menu'] = $data['show_on_menu'];
+
+                $saveData['show_at_homepage'] = $data['show_at_homepage'] ?? 0;
+                $saveData['show_at_body_sort'] = $data['show_at_body_sort'] ?? 0;
+                
+                if(empty($data['parent_id'])) {
+                    $saveData['show_at_footer'] = $data['show_at_footer'] ?? 0;
+                    $saveData['parent_id'] = 0;
+                } else {
+                    $saveData['show_at_footer'] = 0;
+                    $saveData['parent_id'] = $data['parent_id'];
+                }
+
+                foreach ($this->activeLanguages as $lang) {
+                    $saveData['lang_id'] = inputPost('categories[' . $lang->id . '][lang_id]');
+                    $saveData['name'] = inputPost('categories[' . $lang->id . '][name]');
+                    $saveData['name_slug'] = inputPost('categories[' . $lang->id . '][slug]');
+
+                    if (empty($saveData["name_slug"])) {
+                        $saveData["name_slug"] = strSlug($saveData["name"]);
+                    } else {
+                        $saveData["name_slug"] = removeSpecialCharacters($saveData["name_slug"], true);
+                        if (!empty($saveData['name_slug'])) {
+                            $saveData['name_slug'] = str_replace(' ', '-', $saveData['name_slug']);
+                        }
+                    }
+
+                    if (!empty($_FILES['files'])) {
+                        $uploadModel = new UploadModel();
+                        $fileCount = count($_FILES['files']['name']);
+                        for ($i = 0; $i < $fileCount; $i++) {
+                            if (isset($_FILES['files']['name'])) {
+                                $tmpFilePath = $_FILES['files']['tmp_name'][$i];
+                                if (isset($tmpFilePath)) {
+                                    $ext = $uploadModel->getFileExtension($_FILES['files']['name'][$i]);
+                                    $newName = 'temp_' . generateToken() . '.' . $ext;
+                                    $newPath = FCPATH . "uploads/tmp/" . $newName;
+                                    if (move_uploaded_file($tmpFilePath, FCPATH . "uploads/tmp/" . $newName)) {
+                                        if ($ext == 'gif') {
+                                            $gifPath = $uploadModel->uploadGIF($newName, 'category');
+                                            $saveData["file_path"] = $gifPath;
+                                            $saveData["file_name"] = $newName;
+                                        } else {
+                                            $saveData["file_path"] = $uploadModel->uploadCategoryImage($newPath, 1920,400);
+                                            $saveData["file_name"] = $newName;
+                                        }
+                                    }
+            
+                                    $saveData["storage"] = $this->generalSettings->storage;
+            
+                                    $uploadModel->deleteTempFile($newPath);
+                                    //move to s3
+                                    if ($saveData['storage'] == 'aws_s3') {
+                                        $awsModel = new AwsModel();
+                                        if (!empty($saveData['file_path'])) {
+                                            $awsModel->uploadFile($saveData['file_path']);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($this->builder->insert($saveData)) {
+                        $lastId = $this->db->insertID();
+                        $this->updateSlug($lastId);
+                    }
+                }
+            }
+            
+            return true;
+        }
+    
+        return false;
     }
 
     //add category
@@ -57,6 +152,10 @@ class CategoryModel extends BaseModel
             // $data['show_at_homepage'] = 0;
         } else {
             $data['parent_id'] = 0;
+        }
+
+        if (empty($data['post_id'])) {
+            $data['post_id'] = null;
         }
 
         if (!empty($_FILES['files'])) {
@@ -109,6 +208,7 @@ class CategoryModel extends BaseModel
         $category = $this->getCategory($id);
         if (!empty($category)) {
             $data = $this->inputValues();
+            echo "<script>console.log(" . json_encode($data) . ");</script>";
             if (empty($data["name_slug"])) {
                 $data["name_slug"] = strSlug($data["name"]);
             } else {
@@ -129,6 +229,10 @@ class CategoryModel extends BaseModel
                 $this->updateSubCategoriesColor($id, $data['color']);
                 //update subcategories lang_id
                 $this->builder->where('parent_id', $category->id)->update(['lang_id' => $data['lang_id']]);
+            }
+
+            if (empty($data['post_id'])) {
+                $data['post_id'] = null;
             }
 
             $uploadModel = new UploadModel();
@@ -161,6 +265,87 @@ class CategoryModel extends BaseModel
             return true;
         }
         return false;
+    }
+
+    public function editCategory2() {
+        $data = $this->inputValues();
+
+        $categoryDefinition = $this->getCategoryDefinition(inputPost('definition_id'));
+
+        foreach ($this->activeLanguages as $lang) {
+            $category = $this->getCategory(inputPost('categories[' . $lang->id . '][id]'));
+
+            $editData['category_order'] = $data['category_order'];
+            $editData['show_on_menu'] = $data['show_on_menu'];
+            $editData['show_at_homepage'] = $data['show_at_homepage'] ?? 0;
+            $editData['show_at_body_sort'] = $data['show_at_body_sort'] ?? 0;
+
+            if(empty($data['parent_id'])) {
+                $editData['show_at_footer'] = $data['show_at_footer'];
+                $editData['parent_id'] = 0;
+            } else {
+                $editData['show_at_footer'] = 0;
+                $editData['parent_id'] = $data['parent_id'];
+            }
+
+            $editData['lang_id'] = inputPost('categories[' . $lang->id . '][lang_id]');
+            $editData['name'] = inputPost('categories[' . $lang->id . '][name]');
+            $editData['name_slug'] = inputPost('categories[' . $lang->id . '][slug]');
+
+            if (empty($editData["name_slug"])) {
+                $editData["name_slug"] = strSlug($editData["name"]);
+            } else {
+                $editData["name_slug"] = removeSpecialCharacters($editData["name_slug"], true);
+                if (!empty($editData['name_slug'])) {
+                    $editData['name_slug'] = str_replace(' ', '-', $editData['name_slug']);
+                }
+            }
+
+            if (!empty($_FILES['files'])) {
+                $uploadModel = new UploadModel();
+                $fileCount = count($_FILES['files']['name']);
+                for ($i = 0; $i < $fileCount; $i++) {
+                    if (isset($_FILES['files']['name'])) {
+                        $tmpFilePath = $_FILES['files']['tmp_name'][$i];
+                        if (isset($tmpFilePath)) {
+                            $ext = $uploadModel->getFileExtension($_FILES['files']['name'][$i]);
+                            $newName = 'temp_' . generateToken() . '.' . $ext;
+                            $newPath = FCPATH . "uploads/tmp/" . $newName;
+                            if (move_uploaded_file($tmpFilePath, FCPATH . "uploads/tmp/" . $newName)) {
+                                if ($ext == 'gif') {
+                                    $gifPath = $uploadModel->uploadGIF($newName, 'category');
+                                    $editData["file_path"] = $gifPath;
+                                    $editData["file_name"] = $newName;
+                                } else {
+                                    $editData["file_path"] = $uploadModel->uploadCategoryImage($newPath, 1920,400);
+                                    $editData["file_name"] = $newName;
+                                }
+                            }
+    
+                            $editData["storage"] = $this->generalSettings->storage;
+                            $uploadModel->deleteTempFile($newPath);
+                            $this->deleteImageFile($category->id);
+               
+                            if ($editData['storage'] == 'aws_s3') {
+                                $awsModel = new AwsModel();
+                                if (!empty($editData['file_path'])) {
+                                    $awsModel->uploadFile($editData['file_path']);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $this->builder->where('id', $category->id)->update($editData);
+            $this->updateSlug($category->id);
+        }
+
+        if(!empty($data['post_id'])) {
+
+        }
+
+        return true;
     }
 
     public function deleteImageFile($id)
@@ -237,6 +422,16 @@ class CategoryModel extends BaseModel
         return $this->builder->where('id', cleanNumber($id))->get()->getRow();
     }
 
+    public function getCategoryByDefinition($id)
+    {
+        return $this->builder->where('definition_id', cleanNumber($id))->get()->getResultArray();
+    }
+
+    public function getCategoryDefinition($id)
+    {
+        return $this->builderDefinition->where('id', cleanNumber($id))->get()->getRow();
+    }
+
     //get category by slug
     public function getCategoryBySlug($slug)
     {
@@ -267,6 +462,17 @@ class CategoryModel extends BaseModel
         return $this->builder->where('categories.lang_id', cleanNumber($langId))->orderBy('category_order')->get()->getResult();
     }
 
+    public function getCategoriesAndPostByLang($langId)
+    {
+        $this->buildQuery();
+        return $this->builder
+            ->select('categories.*, posts.title_slug, posts.id as post_id')
+            ->join('posts', 'posts.id = categories.post_id', 'left')
+            ->where('categories.lang_id', cleanNumber($langId))
+            ->orderBy('categories.category_order')
+            ->get()
+            ->getResult();
+    }
 
     public function getShowAtMenuCategory($langId)
     {
@@ -274,11 +480,10 @@ class CategoryModel extends BaseModel
         return $this->builder
             ->where('categories.lang_id', cleanNumber($langId))
             ->where('categories.show_at_homepage', 1)
-            // ->orderBy('categories.show_at_body_sort', 'ASC')
             ->get()
             ->getResult();
     }
-    
+
     //get parent categories
     public function getParentCategories()
     {
@@ -322,6 +527,9 @@ class CategoryModel extends BaseModel
     {
         $q = inputGet('q');
         $langId = cleanNumber(inputGet('lang_id'));
+        if(empty(($langId))) {
+            $langId = $this->activeLang->id;
+        }
         $parentId = cleanNumber(inputGet('category'));
         if (!empty($q)) {
             $this->builder->like('name', cleanStr($q));

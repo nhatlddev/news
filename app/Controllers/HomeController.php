@@ -51,7 +51,6 @@ class HomeController extends BaseController
         
         $categoryModelShowAtHomes = $categoryModel->getShowAtMenuCategory($this->activeLang->id);
         $data['categoryModelShowAtHomes'] = $categoryModelShowAtHomes;
-
         //breaking news
         $data['breakingNews'] = getBreakingNews();
         $data['limitLoadMorePosts'] = POST_NUM_LOAD_MORE;

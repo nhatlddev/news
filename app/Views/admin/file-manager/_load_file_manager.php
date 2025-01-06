@@ -3,6 +3,7 @@
 if (!empty($loadImages)) {
     $images = $fileModel->getImages();
     echo view("admin/file-manager/_file_manager_image", ['images' => $images]);
+    echo view("admin/file-manager/_file_manager_image2", ['images' => $images]);
 }
 if (!empty($loadQuizImages)) {
     $quizImages = $fileModel->getQuizImages();
@@ -11,6 +12,7 @@ if (!empty($loadQuizImages)) {
 if (!empty($loadFiles)) {
     $files = $fileModel->getFiles();
     echo view("admin/file-manager/_file_manager", ['files' => $files]);
+    echo view("admin/file-manager/_file_manager2", ['files' => $files]);
 }
 if (!empty($loadVideos)) {
     $videos = $fileModel->getVideos();

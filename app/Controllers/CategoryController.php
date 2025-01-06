@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\CategoryModel;
+use App\Models\PostAdminModel;
 use App\Models\PostModel;
 use App\Models\SettingsModel;
 
@@ -32,8 +33,29 @@ class CategoryController extends BaseAdminController
         $settingsModel = new SettingsModel();
         $data['widgets'] = $settingsModel->getWidgets();
 
+        $postModel = new PostModel();
+        $data['posts'] = $postModel->getPostsByLang($this->activeLang->id);
+
         echo view('admin/includes/_header', $data);
         echo view('admin/category/add_category', $data);
+        echo view('admin/includes/_footer');
+    }
+
+    public function addCategory2()
+    {
+        checkPermission('categories');
+        $data['title'] = trans("add_category");
+        $data['parentCategories'] = $this->categoryModel->getParentCategoriesByLang($this->activeLang->id);
+
+        $data['type'] = inputGet('type');
+        if (empty($data['type']) || $data['type'] != 'sub') {
+            $data['type'] = 'parent';
+        }
+        $settingsModel = new SettingsModel();
+        $data['widgets'] = $settingsModel->getWidgets();
+
+        echo view('admin/includes/_header', $data);
+        echo view('admin/category/multiple_category/add_category2', $data);
         echo view('admin/includes/_footer');
     }
 
@@ -64,6 +86,18 @@ class CategoryController extends BaseAdminController
         return redirect()->to(adminUrl('add-category?type=' . $type));
     }
 
+    public function addCategoryPost2()
+    {
+        checkPermission('categories');
+        
+        if ($this->categoryModel->addCategory2()) {
+            resetCacheDataOnChange();
+            return $this->response->setJSON(['success' => trans("msg_added")]);
+        } else {
+            return $this->response->setJSON(['error' => trans("msg_error")]);
+        }
+    }
+
     /**
      * Categories
      */
@@ -88,6 +122,27 @@ class CategoryController extends BaseAdminController
         echo view('admin/includes/_footer');
     }
 
+    public function categories2()
+    {
+        checkPermission('categories');
+        $data['title'] = trans("categories");
+
+        $numRows = $this->categoryModel->getCategoriesCount();
+        $pager = paginate($this->perPage, $numRows);
+        $data['categories'] = $this->categoryModel->getCategoriesPaginated($this->perPage, $pager->offset);
+
+        $langId = cleanNumber(inputGet('lang_id'));
+        // if(!empty($langId)) {
+        $data['parentCategories'] = $this->categoryModel->getParentCategoriesByLang(empty($langId) ? $this->activeLang->id : $langId);
+        // }else{
+        //     $data['parentCategories'] = $this->categoryModel->getParentCategories();
+        // }
+
+        echo view('admin/includes/_header', $data);
+        echo view('admin/category/multiple_category/categories2', $data);
+        echo view('admin/includes/_footer');
+    }
+
     /**
      * Edit Category
      */
@@ -95,7 +150,10 @@ class CategoryController extends BaseAdminController
     {
         checkPermission('categories');
         $data['title'] = trans("update_category");
-        $data['category'] = $this->categoryModel->getCategory($id);
+
+        $category = $this->categoryModel->getCategory($id);
+        
+        $data['category'] =$category;
         if (empty($data['category'])) {
             return redirect()->to(adminUrl('categories'));
         }
@@ -103,8 +161,43 @@ class CategoryController extends BaseAdminController
         $settingsModel = new SettingsModel();
         $data['widgets'] = $settingsModel->getWidgets();
 
+        $postAdminModel = new PostAdminModel();
+        $data['selectedPost'] = $postAdminModel->getSelectedPostCategory($id);
+
         echo view('admin/includes/_header', $data);
         echo view('admin/category/edit_category', $data);
+        echo view('admin/includes/_footer');
+    }
+
+    public function editCategory2($id)
+    {
+        checkPermission('categories');
+        $data['title'] = trans("update_category");
+
+        $categories = $this->categoryModel->getCategoryByDefinition($id);
+
+        $data['categories'] =$categories;
+        if (empty($data['categories'])) {
+            return redirect()->to(adminUrl('categories'));
+        }
+        
+        $categoryDataByLang = [];
+        foreach ($categories as $category) {
+            $categoryDataByLang[$category['lang_id']] = $category;
+        }
+
+        $data['categoryDataByLang'] = $categoryDataByLang;
+
+        $data['definition_id'] = $id;
+
+        
+        $data['parentCategories'] = $this->categoryModel->getParentCategoriesByLang($this->activeLang->id);
+
+        $postAdminModel = new PostAdminModel();
+        $data['selectedPost'] = $postAdminModel->getSelectedPostCategoryByDefinition($id);
+
+        echo view('admin/includes/_header', $data);
+        echo view('admin/category/multiple_category/edit_category2', $data);
         echo view('admin/includes/_footer');
     }
 
@@ -129,6 +222,16 @@ class CategoryController extends BaseAdminController
         }
         $this->session->setFlashdata('error', trans("msg_error"));
         redirectToBackURL();
+    }
+
+    public function editCategoryPost2()
+    {
+        if ($this->categoryModel->editCategory2()) {
+            resetCacheDataOnChange();
+            return $this->response->setJSON(['success' => trans("msg_updated")]);
+        } else {
+            return $this->response->setJSON(['error' => trans("msg_error")]);
+        }
     }
 
     /**
@@ -171,6 +274,21 @@ class CategoryController extends BaseAdminController
                 echo '<option value="' . $item->id . '">' . $item->name . '</option>';
             }
         }
+    }
+
+    public function getSubCategories2()
+    {
+        $json = $this->request->getJSON();
+        $parentId = $json->parentCategoryId ?? null;
+
+        if (!empty($parentId)) {
+            $subCategories = $this->categoryModel->getSubCategoriesByParentId($parentId);
+            if (!empty($subCategories)) {
+                return $this->response->setJSON($subCategories);
+            }
+        }
+    
+        return $this->response->setJSON([]);
     }
 
     /**

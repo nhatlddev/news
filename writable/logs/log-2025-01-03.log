@@ -1,0 +1,68 @@
+CRITICAL - 2025-01-03 15:18:50 --> Attempt to read property "title" on array
+in APPPATH\Models\PostAdminModel.php on line 81.
+ 1 APPPATH\Models\PostAdminModel.php(81): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Attempt to read property "title" on array', 'C:\\xampp\\htdocs\\news\\app\\Models\\PostAdminModel.php', 81)
+ 2 APPPATH\Controllers\PostController.php(112): App\Models\PostAdminModel->addPost2([...])
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-03 15:19:49 --> Attempt to read property "title" on array
+in APPPATH\Models\PostAdminModel.php on line 81.
+ 1 APPPATH\Models\PostAdminModel.php(81): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Attempt to read property "title" on array', 'C:\\xampp\\htdocs\\news\\app\\Models\\PostAdminModel.php', 81)
+ 2 APPPATH\Controllers\PostController.php(112): App\Models\PostAdminModel->addPost2([...])
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+ERROR - 2025-01-03 15:27:10 --> mysqli_sql_exception: Unknown column 'date_published' in 'field list' in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `po...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `po...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `po...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `po...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\PostAdminModel.php(84): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\PostController.php(110): App\Models\PostAdminModel->addPost2(Array)
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}
+ERROR - 2025-01-03 15:27:10 --> mysqli_sql_exception: Unknown column 'date_published' in 'field list' in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `po...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `po...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `po...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `po...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\PostAdminModel.php(84): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\PostController.php(110): App\Models\PostAdminModel->addPost2(Array)
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}
+ERROR - 2025-01-03 15:27:52 --> mysqli_sql_exception: Unknown column 'post_definition_id' in 'field list' in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `po...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `po...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `po...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `po...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\PostAdminModel.php(84): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\PostController.php(110): App\Models\PostAdminModel->addPost2(Array)
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}
+ERROR - 2025-01-03 15:27:52 --> mysqli_sql_exception: Unknown column 'post_definition_id' in 'field list' in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+Stack trace:
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `po...', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `po...')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `po...')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `po...', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\PostAdminModel.php(84): CodeIgniter\Database\BaseBuilder->insert(Array)
+#5 C:\xampp\htdocs\news\app\Controllers\PostController.php(110): App\Models\PostAdminModel->addPost2(Array)
+#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\PostController->addPostPost2()
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#10 {main}

@@ -14066,7 +14066,6 @@ body {
   color: #ffffff;
   background-color: #fb4c35;
   padding: 0 20px;
-  width: 120px;
 }
 
 footer {
@@ -14264,7 +14263,6 @@ footer a:hover {
 .badge {
   font-size: 0.75rem;
   line-height: 25px;
-  padding: 20px 20px;
 }
 
 span.bg-white.border {
@@ -14663,6 +14661,18 @@ span.bg-white.border i {
 .slider-img {
   width: 100%;
   height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.slider-img::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8));
+  z-index: 1;
 }
 
 .slider-text {
@@ -14672,18 +14682,25 @@ span.bg-white.border i {
   line-height: normal;
   color: #fff;
   transform: translateY(-50%);
+  z-index: 2;
+  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .slider-text h3, .slider-text .h3 {
   font-size: 40px;
-  font-weight: 400;
+  font-weight: bold;
   margin-bottom: 10px;
   opacity: 0;
+  background: #ffffff;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .slider-text p {
   font-size: 18px;
   opacity: 0;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .owl-dots {
@@ -14700,11 +14717,13 @@ span.bg-white.border i {
   display: block;
   margin: 10px 0;
   border-radius: 50%;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .owl-dots .owl-dot.active {
   background: #e05038 !important;
   transform: scale(1.5);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .animate-in-fast {

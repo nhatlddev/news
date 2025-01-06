@@ -1,0 +1,16 @@
+CRITICAL - 2025-01-04 22:20:50 --> Array to string conversion
+in SYSTEMPATH\Database\Query.php on line 329.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'Array to string conversion', 'C:\\xampp\\htdocs\\news\\system\\Database\\Query.php', 329)
+ 2 SYSTEMPATH\Database\Query.php(329): implode(',', [...])
+ 3 SYSTEMPATH\Database\Query.php(310): CodeIgniter\Database\Query->matchNamedBinds('UPDATE `posts` SET `definition_id` = :definition_id:, `posts` = :posts:, `created_at` = :created_at:, `title` = :title:, `is_featured` = :is_featured:, `lang_id` = :lang_id:, `post_type` = :post_type:, `content` = :content:, `category_id` = :category_id:, `user_id` = :user_id:, `visibility` = :visibility:, `title_slug` = :title_slug:, `show_post_url` = :show_post_url:, `status` = :status:, `show_right_column` = :show_right_column:, `is_breaking` = :is_breaking:
+WHERE `id` = :id:', [...])
+ 4 SYSTEMPATH\Database\Query.php(159): CodeIgniter\Database\Query->compileBinds()
+ 5 SYSTEMPATH\Database\BaseConnection.php(606): CodeIgniter\Database\Query->getQuery()
+ 6 SYSTEMPATH\Database\BaseBuilder.php(2476): CodeIgniter\Database\BaseConnection->query('UPDATE `posts` SET `definition_id` = :definition_id:, `posts` = :posts:, `created_at` = :created_at:, `title` = :title:, `is_featured` = :is_featured:, `lang_id` = :lang_id:, `post_type` = :post_type:, `content` = :content:, `category_id` = :category_id:, `user_id` = :user_id:, `visibility` = :visibility:, `title_slug` = :title_slug:, `show_post_url` = :show_post_url:, `status` = :status:, `show_right_column` = :show_right_column:, `is_breaking` = :is_breaking:
+WHERE `id` = :id:', [...], false)
+ 7 APPPATH\Models\PostAdminModel.php(271): CodeIgniter\Database\BaseBuilder->update([...])
+ 8 APPPATH\Controllers\PostController.php(269): App\Models\PostAdminModel->editPost2([...])
+ 9 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPostPost2()
+10 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+11 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()

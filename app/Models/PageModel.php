@@ -177,14 +177,93 @@ class PageModel extends BaseModel
     }
 
     //get menu links
+    // public function getMenuLinks($langId)
+    // {
+    //     $sql = "SELECT * FROM (
+    //     (SELECT categories.id AS item_id, categories.lang_id AS item_lang_id, categories.name AS item_name, categories.name_slug AS item_slug, categories.category_order AS item_order, 'main' 
+    //     AS item_location, 'category' AS item_type, '#' AS item_link, categories.parent_id AS item_parent_id, categories.show_on_menu AS item_visibility FROM categories WHERE categories.lang_id = ?) 
+    //     UNION
+    //     (SELECT pages.id AS item_id, pages.lang_id AS item_lang_id, pages.title AS item_name, pages.slug AS item_slug, pages.page_order AS item_order, pages.location AS item_location, 'page' 
+    //     AS item_type, pages.link AS item_link, pages.parent_id AS item_parent_id, pages.visibility AS item_visibility FROM pages WHERE pages.lang_id = ?)) AS menu_items ORDER BY item_order";
+    //     return $this->db->query($sql, array($langId, $langId))->getResult();
+    // }
+
     public function getMenuLinks($langId)
     {
-        $sql = "SELECT * FROM (
-        (SELECT categories.id AS item_id, categories.lang_id AS item_lang_id, categories.name AS item_name, categories.name_slug AS item_slug, categories.category_order AS item_order, 'main' 
-        AS item_location, 'category' AS item_type, '#' AS item_link, categories.parent_id AS item_parent_id, categories.show_on_menu AS item_visibility FROM categories WHERE categories.lang_id = ?) 
-        UNION
-        (SELECT pages.id AS item_id, pages.lang_id AS item_lang_id, pages.title AS item_name, pages.slug AS item_slug, pages.page_order AS item_order, pages.location AS item_location, 'page' 
-        AS item_type, pages.link AS item_link, pages.parent_id AS item_parent_id, pages.visibility AS item_visibility FROM pages WHERE pages.lang_id = ?)) AS menu_items ORDER BY item_order";
+        // $sql = "
+        // SELECT * FROM (
+        //     (SELECT 
+        //         categories.id AS item_id,
+        //         categories.lang_id AS item_lang_id,
+        //         categories.name AS item_name,
+        //         categories.name_slug AS item_slug,
+        //         categories.category_order AS item_order,
+        //         'main' AS item_location,
+        //         'category' AS item_type,
+        //         '#' AS item_link,
+        //         categories.parent_id AS item_parent_id,
+        //         categories.show_on_menu AS item_visibility,
+        //         posts.title_slug AS title_slug,
+        //         posts.id AS post_id 
+        //     FROM categories
+        //     LEFT JOIN posts ON posts.id = categories.post_id
+        //     WHERE categories.lang_id = ?) 
+        //     UNION
+        //     (SELECT 
+        //         pages.id AS item_id,
+        //         pages.lang_id AS item_lang_id,
+        //         pages.title AS item_name,
+        //         pages.slug AS item_slug,
+        //         pages.page_order AS item_order,
+        //         pages.location AS item_location,
+        //         'page' AS item_type,
+        //         pages.link AS item_link,
+        //         pages.parent_id AS item_parent_id,
+        //         pages.visibility AS item_visibility,
+        //         '' AS title_slug, 
+        //         '' AS post_id 
+        //     FROM pages
+        //     WHERE pages.lang_id = ?)
+        // ) AS menu_items
+        // ORDER BY item_order";
+
+        $sql = "
+        SELECT * FROM (
+            (SELECT 
+                categories.definition_id AS item_id,
+                categories.lang_id AS item_lang_id,
+                categories.name AS item_name,
+                categories.name_slug AS item_slug,
+                categories.category_order AS item_order,
+                'main' AS item_location,
+                'category' AS item_type,
+                '#' AS item_link,
+                COALESCE((select c.definition_id from categories c where c.id = categories.parent_id), 0) AS item_parent_id,
+                categories.show_on_menu AS item_visibility,
+                posts.title_slug AS title_slug,
+                posts.id AS post_id 
+            FROM categories
+            LEFT JOIN posts ON posts.id = categories.post_id
+            WHERE categories.lang_id = ?) 
+            UNION
+            (SELECT 
+                pages.id AS item_id,
+                pages.lang_id AS item_lang_id,
+                pages.title AS item_name,
+                pages.slug AS item_slug,
+                pages.page_order AS item_order,
+                pages.location AS item_location,
+                'page' AS item_type,
+                pages.link AS item_link,
+                pages.parent_id AS item_parent_id,
+                pages.visibility AS item_visibility,
+                '' AS title_slug, 
+                '' AS post_id 
+            FROM pages
+            WHERE pages.lang_id = ?)
+        ) AS menu_items
+        ORDER BY item_order";
+
         return $this->db->query($sql, array($langId, $langId))->getResult();
     }
 

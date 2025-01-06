@@ -1,7 +1,6 @@
 <div class="container my-4">
     <div class="row gx-2">
         <div class="col-lg-9">
-
             <div class="slider-container">
                 <div class="site-slider owl-carousel">
                 <?php 
@@ -15,8 +14,27 @@
                             <img src="<?= esc($item->file_path); ?>" alt="Slide 1" />
                         </div>
                         <div class="slider-text">
-                            <h3><?= esc($item->title); ?></h3>
-                            <p><?= esc($item->content); ?></p>
+                            <h3>
+                                <?php 
+                                    $arrayContent = explode('</p>', $item->title);
+                                    if (!empty($arrayContent)) {
+                                        foreach ($arrayContent as $p) {
+                                            echo $p;
+                                        }
+                                    }
+                                
+                                ?>
+                            </h3>
+                            <p>
+                            <?php 
+                                $arrayContent = explode('</p>', $item->content);
+                                if (!empty($arrayContent)) {
+                                    foreach ($arrayContent as $p) {
+                                        echo $p;
+                                    }
+                                }
+                                ?>
+                            </p>
                         </div>
                     </div>
 
@@ -25,60 +43,8 @@
                                 endforeach;
                         endif; 
                     ?> 
-                        <!-- <div>
-                        <div class="slider-img">
-                            <img src="https://webtechball.files.wordpress.com/2017/09/slider-img-3.jpg" alt="Slide 2" />
-                        </div>
-                        <div class="slider-text">
-                            <h3>Slide Two</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        </div>
-                        </div>
-                        <div>
-                        <div class="slider-img">
-                            <img src="https://webtechball.files.wordpress.com/2017/09/slider-img-2.jpg" alt="Slide 3" />
-                        </div>
-                        <div class="slider-text">
-                            <h3>Slide Three</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        </div> -->
-                    <!-- </div> -->
                 </div>
             </div>
-
-            <!-- <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <<?php 
-                        $i = 0;
-                        if(!empty($banners)): 
-                            foreach($banners as $item):
-                                $imgBaseURL = getBaseURLByStorage($item->storage); 
-                        ?>
-                            <div class="carousel-item <?= $i === 0 ? 'active' : ''; ?>">
-                                <img src="<?= esc($item->file_path); ?>" class="d-block w-100" alt="News 1">
-                                <div class="carousel-caption d-none d-lg-block">
-                                    <span class="badge bg-primary fs-1 mb-1"><?= esc($item->title); ?></span>
-                                    <h4><?= esc($item->content); ?></h4>
-                                </div>
-                            </div>
-                    <?php  
-                                $i++;   
-                                endforeach;
-                        endif; 
-                    ?> 
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div> -->
-        
-            
-
         </div>
 
         <div class="col-lg-3 bg-white">
@@ -125,7 +91,7 @@
                 ?>
                 <div class="col-md-6 mb-4">
                     <div class="section-title-holder clearfix pattern-light mb-1">
-                        <span class="st-title cursor-pointer" routerLink="/post/list">
+                        <span class="st-title cursor-pointer" style="width: 120px">
                         <?= esc($item->name); ?>
                         </span>
                     </div>

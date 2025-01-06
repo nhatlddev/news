@@ -77,6 +77,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label><?= trans('posts'); ?></label>
+                        <select id="post_id" class="form-control" name="post_id" data-placeholder="<?= trans('none'); ?>" style="width: 100%;">
+                            <?php if (isset($selectedPost)): ?>
+                                <option value="<?= $selectedPost->post_id; ?>" selected>
+                                    <?= $selectedPost->post_title; ?>
+                                </option>
+                            <?php else: ?>
+                                <option value=""><?= trans('none'); ?></option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <div class="row">
                             <div class="col-sm-5 col-xs-12">
                                 <label><?= trans('show_on_menu'); ?></label>
@@ -126,7 +139,7 @@
 
                     <div class="form-group <?= $category->show_at_homepage != '1' ? 'd-none' : ''; ?>" id="show_at_body_sort_group">
                         <label><?= trans("show_at_body_sort"); ?></label>
-                        <input type="number" class="form-control" name="show_at_body_sort" placeholder="<?= trans('show_at_body_sort'); ?>" value="<?= esc($category->show_at_body_sort); ?>" min="1" max="3000">
+                        <input id="show_at_body_sort" type="number" class="form-control" name="show_at_body_sort" placeholder="<?= trans('show_at_body_sort'); ?>" value="<?= esc($category->show_at_body_sort); ?>" min="0" max="3000">
                     </div>
                     
                     <div class="form-group">
@@ -237,3 +250,35 @@
     </div>
 </div>
 
+<script>
+$(document).ready(function () {
+    $('#post_id').select2({
+        placeholder: "<?= trans('search_posts'); ?>", 
+        allowClear: true,
+        width: '100%', 
+        ajax: {
+            url: "<?= adminUrl('posts/searchDropdown'); ?>", 
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    query: params.term || '', 
+                    limit: 10 
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.title
+                        };
+                    })
+                };
+            },
+            cache: true 
+        },
+        minimumInputLength: 0 
+    });
+});
+</script>

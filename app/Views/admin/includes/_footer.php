@@ -27,6 +27,10 @@
 <script src="<?= base_url('assets/admin/js/custom-2.2.js'); ?>"></script>
 <script src="<?= base_url('assets/admin/js/post-types-2.2.js'); ?>"></script>
 <script src="<?= base_url('assets/admin/plugins/tinymce/tinymce.min.js'); ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="<?= base_url('assets/vendor/js/file_manager.js'); ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
     function initTinyMCE(selector, minHeight) {
         var menuBar = 'file insert format table help';

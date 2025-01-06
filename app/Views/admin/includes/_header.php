@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese" rel="stylesheet">
     <!-- <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-v3/css/bootstrap.min.css'); ?>"> -->
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap-v3/css/bootstrap.min.css'); ?>">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="<?= base_url('assets/admin/scss/style.css'); ?>">
     <!-- <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css'); ?>"> -->
     <link rel="stylesheet" href="<?= base_url('assets/admin/plugins/font-awesome/css/font-awesome.min.css'); ?>">
@@ -29,10 +30,16 @@
     <link rel="stylesheet" href="<?= base_url('assets/admin/css/custom-2.2.css'); ?>">
     <script src="<?= base_url('assets/admin/js/jquery.min.js'); ?>"></script>
     <script src="<?= base_url('assets/admin/plugins/overlay-scrollbars/OverlayScrollbars.min.js'); ?>"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+    
     <script>$(function () {
             $('.sidebar-scrollbar').overlayScrollbars({});
         });</script>
     <script src="<?= base_url('assets/vendor/sweetalert/sweetalert.min.js'); ?>"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
+    
     <script>var directionality = "ltr";</script>
     <?php if ($activeLang->text_direction == 'rtl'): ?>
         <link href="<?= base_url('assets/admin/css/rtl-2.1.css'); ?>" rel="stylesheet"/>
@@ -125,9 +132,9 @@
                             <!-- <a href="<?= adminUrl('post-format'); ?>"><i class="fa fa-file"></i><span><?= trans("add_post"); ?></span></a> -->
                             <!-- <a href="<?= adminUrl('add-post') ?>"><i class="fa fa-file"></i><span><?= trans("add_post"); ?></span></a> -->
                         <!-- </li> -->
-                        <li class="nav-import-posts">
+                        <!-- <li class="nav-import-posts">
                             <a href="<?= adminUrl('bulk-post-upload'); ?>"><i class="fa fa-cloud-upload"></i><span><?= trans("bulk_post_upload"); ?></span></a>
-                        </li>
+                        </li> -->
                         <li class="treeview<?php isAdminNavActive(['posts', 'slider-posts', 'featured-posts', 'breaking-news', 'recommended-posts', 'pending-posts', 'scheduled-posts', 'drafts', 'update-post']); ?>">
                             <a href="#"><i class="fa fa-bars"></i> <span><?= trans("posts"); ?></span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>
                             <ul class="treeview-menu">

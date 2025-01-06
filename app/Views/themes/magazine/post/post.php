@@ -34,7 +34,7 @@
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <div class="bd-highlight">
                                 <a href="<?= generateCategoryURLById($post->category_id, $baseCategories); ?>">
-                                    <span class="badge badge-category" style="background-color: <?= esc($post->category_color); ?>"><?= esc($post->category_name); ?></span>
+                                    <span class="badge badge-category bg-primary"><?= esc($post->category_name); ?></span>
                                 </a>
                             </div>
                             <div class="bd-highlight ms-auto">

@@ -1,3 +1,4 @@
+@import "../../vendor/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css";
 .m-0 {
   margin: 0;
 }
@@ -5854,4 +5855,76 @@
 .text-break {
   word-wrap: break-word;
   word-break: break-all;
+}
+
+.select2-container .select2-selection--single {
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.select2-container .select2-selection--single:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 34px;
+  right: 10px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #aaa;
+}
+
+.select2-container .select2-dropdown {
+  border-radius: 0;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: #337ab7;
+  color: white;
+}
+
+.swal-large-popup {
+  width: 500px !important;
+  height: auto !important;
+}
+
+.swal-large-title {
+  font-size: 35px !important;
+}
+
+.swal-large-content {
+  font-size: 25px !important;
+}
+
+.swal-large-button {
+  font-size: large;
+  background-color: #fb4c35;
+}
+
+.text-primary {
+  color: #fb4c35 !important;
+}
+.text-dark {
+  color: #000000;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+  color: #fb4c35;
+  cursor: default;
+  font-weight: bold;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
 }

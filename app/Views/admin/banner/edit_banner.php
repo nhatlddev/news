@@ -27,12 +27,14 @@
 
                     <div class="form-group">
                         <label><?= trans("title"); ?></label>
-                        <input type="text" class="form-control" name="title" placeholder="<?= trans("title"); ?>" value="<?= esc($image->title); ?>" maxlength="200">
+                        <textarea class="tinyMCE form-control" name="title"><?= esc($image->title); ?></textarea>
+                        <!-- <input type="text" class="form-control" name="title" placeholder="<?= trans("title"); ?>" value="<?= esc($image->title); ?>" maxlength="200"> -->
                     </div>
 
                     <div class="form-group">
                         <label><?= trans("content"); ?></label>
-                        <textarea class="form-control" name="content" placeholder="<?= trans('content'); ?>"><?= $image->content; ?></textarea>
+                        <textarea class="tinyMCE form-control" name="content"><?= $image->content; ?></textarea>
+                        <!-- <textarea class="form-control" name="content" placeholder="<?= trans('content'); ?>"><?= $image->content; ?></textarea> -->
                     </div>
 
                     <div class="form-group">

@@ -1619,6 +1619,14 @@ if (!function_exists('getCategoriesByLang')) {
     }
 }
 
+if (!function_exists('getCategoriesAndPostByLang')) {
+    function getCategoriesAndPostByLang($langId)
+    {
+        $model = new \App\Models\CategoryModel();
+        return $model->getCategoriesAndPostByLang($langId);
+    }
+}
+
 //get subcategories
 if (!function_exists('getSubcategories')) {
     function getSubcategories($parentId, $categories)
