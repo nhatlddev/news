@@ -105,7 +105,7 @@ class PostAdminModel extends BaseModel
 
         $data['title'] = $postData['title'];
         $data['definition_id'] = $postData['post_definition_id'];
-        $data['is_featured'] = $postData['is_featured'];
+        $data['is_breaking'] = $postData['is_breaking'];
         $data['lang_id'] = $postData['lang_id'];
         $data['post_type'] = 'article';
         $data['content'] = $postData['content'];
@@ -113,6 +113,13 @@ class PostAdminModel extends BaseModel
             $data['category_id'] = $postData['subcategory_id'];
         } else {
             $data['category_id'] = $postData['category_id'];
+        }
+
+        $categoryModel = new CategoryModel();
+        $category = $categoryModel->getCategory($data['category_id']);
+        if(!empty($category)) {
+            $this->builderDefinition->where('id', $data['definition_id'])
+                        ->update(['category_definition_id' => $category->definition_id]);
         }
         
         $data['user_id'] = user()->id;
@@ -134,9 +141,10 @@ class PostAdminModel extends BaseModel
         }
         
         $data['show_post_url'] = 0;
-        $data['status'] = 1;
+        $dataToUpdate['status'] = $postData['status'] ?? 1;
         $data['show_right_column'] = 0;
-        $data['is_breaking'] = 0;
+        $data['is_featured'] = 0;
+        $data['is_scheduled'] = 0;
 
         $postImageId = $postData['post_image_id'];
         if (!empty($postImageId)) {
@@ -209,7 +217,9 @@ class PostAdminModel extends BaseModel
         if (empty($data['show_right_column'])) {
             $data['show_right_column'] = 0;
         }
-        $data['is_breaking'] = 0;
+
+        // $data['is_breaking'] = 0;
+        $data['is_featured'] = 0;
         //add post image
         $data['image_big'] = '';
         $data['image_default'] = '';
@@ -256,7 +266,7 @@ class PostAdminModel extends BaseModel
                 ? $postData['date_published'] 
                 : date('Y-m-d H:i:s');
             $dataToUpdate['title'] = $postData['title'] ?? '';
-            $dataToUpdate['is_featured'] = $postData['is_featured'];
+            $dataToUpdate['is_breaking'] = $postData['is_breaking'];
             $dataToUpdate['lang_id'] = $postData['lang_id'] ?? 1; 
             $dataToUpdate['post_type'] = 'article';
             $dataToUpdate['content'] = $postData['content'] ?? '';
@@ -266,17 +276,25 @@ class PostAdminModel extends BaseModel
             ? $postData['subcategory_id']
             : $postData['category_id'];
 
+            $categoryModel = new CategoryModel();
+            $category = $categoryModel->getCategory($dataToUpdate['category_id']);
+            if(!empty($category)) {
+                $this->builderDefinition->where('id', $dataToUpdate['definition_id'])
+                        ->update(['category_definition_id' => $category->definition_id]);
+            }
+
             $dataToUpdate['user_id'] = user()->id;
             $dataToUpdate['visibility'] = $postData['visibility'] ?? 1;
 
             $dataToUpdate['title_slug'] = empty($postData['slug'])
             ? strSlug($postData['title'])
             : str_replace(' ', '-', removeSpecialCharacters($postData['slug'], true));
-
+            // error_log($dataToUpdate);
             $dataToUpdate['show_post_url'] = 0;
-            $dataToUpdate['status'] = 1;
+            $dataToUpdate['status'] = $postData['status'] ?? 1;
             $dataToUpdate['show_right_column'] = 0;
-            $dataToUpdate['is_breaking'] = 0;
+            $dataToUpdate['is_featured'] = 0;
+            $dataToUpdate['is_scheduled'] = 0;
 
             $postImageId = $postData['post_image_id'];
             if (!empty($postImageId)) {
@@ -307,7 +325,7 @@ class PostAdminModel extends BaseModel
                 $dataToUpdate['image_storage'] = '';
             }
 
-            $this->builder->set($dataToUpdate)->where('id', $postData['post_id'])->update();
+            $this->builder->set($dataToUpdate)->where('id', $post->id)->update();
 
             $this->updateSlug($postData['post_id']);
 
@@ -327,7 +345,7 @@ class PostAdminModel extends BaseModel
             }
 
             $tagModel = new TagModel();
-            $tagModel->addPostTags($postData['post_id'], $postData['tags']);
+            $tagModel->addPostTags($post->id, $postData['tags']);
             // $this->builder->where('id', $postData['post_id'])->update($data);
         }
     }
@@ -459,12 +477,16 @@ class PostAdminModel extends BaseModel
     //get post
     public function getPost($id)
     {
-        return $this->builder->where('id', cleanNumber($id))->get()->getRow();
+        return $this->builder
+        ->where('id', cleanNumber($id))->get()->getRow();
     }
 
     public function getPostsByDefinition($id)
     {
-        return $this->builder->where('definition_id', cleanNumber($id))->get()->getResultArray();
+        return $this->builder
+        ->select('posts.*, pd.id AS pdId, pd.category_definition_id AS category_definition_id')
+        ->join('post_definition pd', 'posts.definition_id = pd.id')
+        ->where('definition_id', cleanNumber($id))->get()->getResultArray();
     }
 
     public function getPostDefinition($id)
@@ -544,11 +566,11 @@ class PostAdminModel extends BaseModel
 
         $postType = cleanStr(inputGet('post_type'));
         $user = cleanNumber(inputGet('user'));
-        $category = cleanNumber(inputGet('category'));
-        $subCategory = cleanNumber(inputGet('subcategory'));
+        $categoryId = cleanNumber(inputGet('category'));
+        $subCategoryId = cleanNumber(inputGet('subcategory'));
         $q = inputGet('q');
-        if (!empty($subCategory)) {
-            $category = $subCategory;
+        if (!empty($subCategoryId)) {
+            $categoryId = $subCategoryId;
         }
         $userId = null;
         if (checkUserPermission('manage_all_posts')) {
@@ -567,12 +589,19 @@ class PostAdminModel extends BaseModel
         if (!empty($postType)) {
             $this->builder->where('posts.post_type', cleanStr($postType));
         }
-        if (!empty($category)) {
+        
+        $this->builder->select('posts.*');
+
+        if (!empty($categoryId)) {
             $categoryModel = new CategoryModel();
             $categories = $categoryModel->getCategories();
-            $categoryIds = getCategoryTree($category, $categories);
+            $category = $categoryModel->getCategory($categoryId);
+
+            $categoryIds = getCategoryTree2($category->id, $category->definition_id, $categories);
             if (!empty($categoryIds) && countItems($categoryIds) > 0) {
-                $this->builder->whereIn('posts.category_id', $categoryIds, false);
+                $this->builder
+                ->join('post_definition pd', 'posts.definition_id = pd.id')
+                ->whereIn('pd.category_definition_id', $categoryIds, false);
             }
         }
         if (!empty($q)) {
@@ -616,6 +645,23 @@ class PostAdminModel extends BaseModel
             } else {
                 return $this->builder->where('id', $post->id)->update(['is_featured' => 1]);
             }
+        }
+        return false;
+    }
+
+    public function addRemoveBreaking2($post)
+    {
+        $posts = $this->getPostsByDefinition($post->definition_id);
+
+        if (!empty($posts)) {
+            foreach ($posts as $post) { 
+                if ($post['is_breaking'] == 1) {
+                    $this->builder->where('id', $post['id'])->update(['is_breaking' => 0]);
+                } else {
+                    $this->builder->where('id', $post['id'])->update(['is_breaking' => 1]);
+                }
+            }
+            return true;
         }
         return false;
     }
@@ -669,6 +715,14 @@ class PostAdminModel extends BaseModel
     {
         if (!empty($post)) {
             return $this->builder->where('id', $post->id)->update(['status' => 1, 'created_at' => date('Y-m-d H:i:s')]);
+        }
+        return false;
+    }
+
+    public function publishDraft2($post)
+    {
+        if (!empty($post)) {
+            return $this->builder->where('definition_id', $post->definition_id)->update(['status' => 1, 'created_at' => date('Y-m-d H:i:s')]);
         }
         return false;
     }

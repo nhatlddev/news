@@ -113,11 +113,11 @@
                             <label><?= trans('show_at_homepage'); ?></label>
                         </div>
                         <div class="col-md-3 col-sm-4 col-xs-12 col-option">
-                            <input type="radio" id="rb_show_at_homepage_1" name="show_at_homepage" value="1" class="square-purple" checked>
+                            <input type="radio" id="rb_show_at_homepage_1" name="show_at_homepage" value="1" class="square-purple" >
                             <label for="rb_show_at_homepage_1" class="cursor-pointer"><?= trans('yes'); ?></label>
                         </div>
                         <div class="col-md-3 col-sm-4 col-xs-12 col-option">
-                            <input type="radio" id="rb_show_at_homepage_2" name="show_at_homepage" value="0" class="square-purple">
+                            <input type="radio" id="rb_show_at_homepage_2" name="show_at_homepage" value="0" class="square-purple" checked>
                             <label for="rb_show_at_homepage_2" class="cursor-pointer"><?= trans('no'); ?></label>
                         </div>
                     </div>
@@ -337,6 +337,20 @@
 
 <script>
     $(document).ready(function () {
+        const showAtBodySortGroup = document.getElementById("show_at_body_sort_group");
+        const showAtBodySort = document.getElementById("show_at_body_sort");
+    
+        const rbShowAtHomepage1 = document.getElementById("rb_show_at_homepage_1");
+        const rbShowAtHomepage2 = document.getElementById("rb_show_at_homepage_2");
+    
+        if (rbShowAtHomepage1.checked) {
+            showAtBodySortGroup.style.display = "block";
+            showAtBodySort.setAttribute("required", "true");
+        } else if (rbShowAtHomepage2.checked) {
+            showAtBodySortGroup.style.display = "none";
+            showAtBodySort.removeAttribute("required");
+        }
+
         // Initialize Select2
         $('#post_id').select2({
             placeholder: "<?= trans('search_posts'); ?>",

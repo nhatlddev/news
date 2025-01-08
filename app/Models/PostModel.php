@@ -29,6 +29,7 @@ class PostModel extends BaseModel
         }
         $this->builder->resetQuery();
         $this->builder->join('categories', 'categories.id = posts.category_id')->join('users', 'users.id = posts.user_id');
+        
         if ($joinTags) {
             $this->builder->join('tags', 'tags.post_id = posts.id');
         }
@@ -71,7 +72,32 @@ class PostModel extends BaseModel
     //get latest posts
     public function getLatestPosts($limit)
     {
-        $this->buildQuery();
+
+        $langId = $this->activeLang->id;
+        
+        $this->builder->join('users', 'users.id = posts.user_id')
+                    ->join('post_definition pd', 'posts.definition_id = pd.id')
+                    ->join('categories c', 'pd.category_definition_id = c.definition_id');
+        
+        $this->builder->select('posts.id, posts.lang_id, posts.title, posts.title_slug, posts.summary, 
+                                posts.category_id, posts.image_big, posts.image_slider, posts.image_mid, 
+                                posts.image_small, posts.image_mime, posts.image_storage, posts.slider_order, 
+                                posts.featured_order, posts.post_type, posts.image_url, posts.user_id, 
+                                posts.pageviews, posts.post_url, posts.updated_at, posts.created_at, 
+                                c.name AS category_name, c.name_slug AS category_slug, 
+                                c.color AS category_color, users.username AS author_username, 
+                                users.slug AS author_slug, 
+                                (SELECT COUNT(comments.id) 
+                                FROM comments 
+                                WHERE posts.id = comments.post_id 
+                                AND comments.parent_id = 0 
+                                AND comments.status = 1) AS comment_count');
+        
+        $this->builder->where('posts.is_scheduled', 0)
+                    ->where('posts.visibility', 1)
+                    ->where('posts.status', 1)
+                    ->where('posts.lang_id', cleanNumber($langId))
+                    ->where('c.lang_id', cleanNumber($langId));
         return $this->builder->orderBy('posts.created_at DESC, id DESC')->limit(cleanNumber($limit))->get()->getResult();
     }
 
@@ -128,6 +154,49 @@ class PostModel extends BaseModel
         $this->builder->orderBy('posts.created_at DESC');
         return $this->builder->get(10)->getResult();
     }
+
+    public function getPostByCategoryDefinition($definitionId)
+    {
+        $langId = $this->activeLang->id;
+        
+        $this->builder->join('users', 'users.id = posts.user_id')
+                    ->join('post_definition pd', 'posts.definition_id = pd.id')
+                    ->join('categories c', 'pd.category_definition_id = c.definition_id');
+        
+        $this->builder->select('posts.id, posts.lang_id, posts.title, posts.title_slug, posts.summary, 
+                                posts.category_id, posts.image_big, posts.image_slider, posts.image_mid, 
+                                posts.image_small, posts.image_mime, posts.image_storage, posts.slider_order, 
+                                posts.featured_order, posts.post_type, posts.image_url, posts.user_id, 
+                                posts.pageviews, posts.post_url, posts.updated_at, posts.created_at, 
+                                c.name AS category_name, c.name_slug AS category_slug, 
+                                c.color AS category_color, users.username AS author_username, 
+                                users.slug AS author_slug, 
+                                (SELECT COUNT(comments.id) 
+                                FROM comments 
+                                WHERE posts.id = comments.post_id 
+                                AND comments.parent_id = 0 
+                                AND comments.status = 1) AS comment_count');
+        
+        $this->builder->where('posts.is_scheduled', 0)
+                    ->where('posts.visibility', 1)
+                    ->where('posts.status', 1)
+                    ->where('posts.lang_id', cleanNumber($langId))
+                    ->where('c.lang_id', cleanNumber($langId));     
+        $this->builder->where('pd.category_definition_id', $definitionId);
+        $this->builder->orderBy('posts.created_at DESC');
+        return $this->builder->get(10)->getResult();
+    }
+
+    public function getPageViewsSumByDefinitionId($definitionId)
+    {
+        $this->builder = $this->db->table('posts');
+        return $this->builder
+            ->selectSum('posts.pageviews')
+            ->join('post_definition pd', 'posts.definition_id = pd.id')
+            ->where('pd.category_definition_id', cleanNumber($definitionId))
+            ->get()->getRow();
+    }
+
 
     public function getMenuPosts($categoryId)
     {
@@ -207,6 +276,39 @@ class PostModel extends BaseModel
         return $this->builder->whereIn('posts.category_id', $categoryIds, false)->countAllResults();
     }
 
+    public function getPostCountByCategory2($categoryId, $definitionId, $categories)
+    {
+        $categoryIds = getCategoryTree2($categoryId, $definitionId, $categories);
+        if (countItems($categoryIds) < 1) {
+            return array();
+        }
+        $langId = $this->activeLang->id;
+        $this->builder->join('users', 'users.id = posts.user_id')
+                    ->join('post_definition pd', 'posts.definition_id = pd.id')
+                    ->join('categories c', 'pd.category_definition_id = c.definition_id');
+        
+        $this->builder->select('posts.id, posts.lang_id, posts.title, posts.title_slug, posts.summary, 
+                                posts.category_id, posts.image_big, posts.image_slider, posts.image_mid, 
+                                posts.image_small, posts.image_mime, posts.image_storage, posts.slider_order, 
+                                posts.featured_order, posts.post_type, posts.image_url, posts.user_id, 
+                                posts.pageviews, posts.post_url, posts.updated_at, posts.created_at, 
+                                c.name AS category_name, c.name_slug AS category_slug, 
+                                c.color AS category_color, users.username AS author_username, 
+                                users.slug AS author_slug, 
+                                (SELECT COUNT(comments.id) 
+                                FROM comments 
+                                WHERE posts.id = comments.post_id 
+                                AND comments.parent_id = 0 
+                                AND comments.status = 1) AS comment_count');
+        
+        $this->builder->where('posts.is_scheduled', 0)
+                    ->where('posts.visibility', 1)
+                    ->where('posts.status', 1)
+                    ->where('posts.lang_id', cleanNumber($langId))
+                    ->where('c.lang_id', cleanNumber($langId));
+        return $this->builder->whereIn('pd.category_definition_id', $categoryIds, false)->countAllResults();
+    }
+
     //get posts by cateogry paginated
     public function getPostsByCategoryPaginated($categoryId, $categories, $perPage, $offset)
     {
@@ -216,6 +318,42 @@ class PostModel extends BaseModel
         }
         $this->buildQuery();
         return $this->builder->whereIn('posts.category_id', $categoryIds, false)->orderBy('posts.created_at DESC')->limit($perPage, $offset)->get()->getResult();
+    }
+
+    public function getPostsByCategoryPaginated2($categoryId, $definitionId, $categories, $perPage, $offset)
+    {
+        $categoryIds = getCategoryTree2($categoryId, $definitionId, $categories);
+        error_log("Category IDs: " . print_r($categoryIds, true));
+        if (countItems($categoryIds) < 1) {
+            return array();
+        }
+        $langId = $this->activeLang->id;
+        
+        $this->builder->join('users', 'users.id = posts.user_id')
+                    ->join('post_definition pd', 'posts.definition_id = pd.id')
+                    ->join('categories c', 'pd.category_definition_id = c.definition_id');
+        
+        $this->builder->select('posts.id, posts.lang_id, posts.title, posts.title_slug, posts.summary, 
+                                posts.category_id, posts.image_big, posts.image_slider, posts.image_mid, 
+                                posts.image_small, posts.image_mime, posts.image_storage, posts.slider_order, 
+                                posts.featured_order, posts.post_type, posts.image_url, posts.user_id, 
+                                posts.pageviews, posts.post_url, posts.updated_at, posts.created_at, 
+                                c.name AS category_name, c.name_slug AS category_slug, 
+                                c.color AS category_color, users.username AS author_username, 
+                                users.slug AS author_slug, 
+                                (SELECT COUNT(comments.id) 
+                                FROM comments 
+                                WHERE posts.id = comments.post_id 
+                                AND comments.parent_id = 0 
+                                AND comments.status = 1) AS comment_count');
+        
+        $this->builder->where('posts.is_scheduled', 0)
+                    ->where('posts.visibility', 1)
+                    ->where('posts.status', 1)
+                    ->where('posts.lang_id', cleanNumber($langId))
+                    ->where('c.lang_id', cleanNumber($langId));
+
+        return $this->builder->whereIn('pd.category_definition_id', $categoryIds, false)->orderBy('posts.created_at DESC')->limit($perPage, $offset)->get()->getResult();
     }
 
     //get paginated tag posts

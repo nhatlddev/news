@@ -230,7 +230,8 @@ class PageModel extends BaseModel
         $sql = "
         SELECT * FROM (
             (SELECT 
-                categories.definition_id AS item_id,
+                categories.id AS item_id,
+                categories.definition_id AS definition_id,
                 categories.lang_id AS item_lang_id,
                 categories.name AS item_name,
                 categories.name_slug AS item_slug,
@@ -243,11 +244,14 @@ class PageModel extends BaseModel
                 posts.title_slug AS title_slug,
                 posts.id AS post_id 
             FROM categories
-            LEFT JOIN posts ON posts.id = categories.post_id
+            INNER JOIN news.category_definition cd ON cd.id = categories.definition_id
+            LEFT JOIN post_definition pd ON pd.id = cd.post_definition_id
+            LEFT JOIN posts ON (posts.definition_id = pd.id AND posts.lang_id = ?)
             WHERE categories.lang_id = ?) 
             UNION
             (SELECT 
                 pages.id AS item_id,
+                '' AS definition_id,
                 pages.lang_id AS item_lang_id,
                 pages.title AS item_name,
                 pages.slug AS item_slug,
@@ -264,7 +268,7 @@ class PageModel extends BaseModel
         ) AS menu_items
         ORDER BY item_order";
 
-        return $this->db->query($sql, array($langId, $langId))->getResult();
+        return $this->db->query($sql, array($langId, $langId, $langId))->getResult();
     }
 
     //sort menu items

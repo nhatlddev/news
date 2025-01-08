@@ -146,7 +146,7 @@
                                                                 </button>
                                                             </li>
                                                         <?php endif ?> -->
-                                                        <?php if ($item->is_featured == 1): ?>
+                                                        <!-- <?php if ($item->is_featured == 1): ?>
                                                             <li>
                                                                 <button type="submit" name="option" value="add_remove_featured" class="btn-list-button">
                                                                     <i class="fa fa-times option-icon"></i><?= trans('remove_featured'); ?>
@@ -158,8 +158,8 @@
                                                                     <i class="fa fa-plus option-icon"></i><?= trans('add_featured'); ?>
                                                                 </button>
                                                             </li>
-                                                        <?php endif ?>
-                                                        <!-- <?php if ($item->is_breaking == 1): ?>
+                                                        <?php endif ?> -->
+                                                        <?php if ($item->is_breaking == 1): ?>
                                                             <li>
                                                                 <button type="submit" name="option" value="add_remove_breaking" class="btn-list-button">
                                                                     <i class="fa fa-times option-icon"></i><?= trans('remove_breaking'); ?>
@@ -171,8 +171,8 @@
                                                                     <i class="fa fa-plus option-icon"></i><?= trans('add_breaking'); ?>
                                                                 </button>
                                                             </li>
-                                                        <?php endif;
-                                                        if ($item->is_recommended == 1): ?>
+                                                        <?php endif; ?>
+                                                        <!-- <?php if ($item->is_recommended == 1): ?> 
                                                             <li>
                                                                 <button type="submit" name="option" value="add_remove_recommended" class="btn-list-button">
                                                                     <i class="fa fa-times option-icon"></i><?= trans('remove_recommended'); ?>

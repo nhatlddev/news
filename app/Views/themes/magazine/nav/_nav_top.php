@@ -40,13 +40,15 @@ $itemsMegaMenu = array(); ?>
                                 $item->item_parent_id == '0'
                             ):
                                 if ($i < $menuLimit):
-                                    $subLinks = getSubMenuLinks($baseMenuLinks, $item->item_id, $item->item_type);
+                                    // $subLinks = getSubMenuLinks($baseMenuLinks, $item->item_id, $item->item_type);
                                     
                                     if ($item->item_type == "category"):
                                         $category = getCategory($item->item_id, $baseCategories);
-                                        $subCategories = getSubcategories($category->id, $baseCategories);
-
-                                        if (!empty($category)):
+                                        $subCategories = getSubcategoriesByDefinition($category->id, $category->definition_id, $baseCategories);
+                                        // echo '<script>';
+                                        // echo 'console.log(' . json_encode($subCategories, JSON_PRETTY_PRINT) . ');';
+                                        // echo '</script>';
+                                        if (!empty($category)): 
                                             $isActiveCategory = false;
                                             if (!empty($subCategories)): 
                                                 foreach ($subCategories as $subMenu) {

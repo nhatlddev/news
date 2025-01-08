@@ -74,7 +74,7 @@
                     </div>
             <div class="text-end">
                 <button class="btn btn-primary more-btn border-0">
-                    <span>Xem thêm</span>
+                    <span><?= trans("load_more"); ?></span>
                     <i class="bi bi-arrow-right"></i>
                 </button>
             </div>
@@ -91,7 +91,7 @@
                 ?>
                 <div class="col-md-6 mb-4">
                     <div class="section-title-holder clearfix pattern-light mb-1">
-                        <span class="st-title cursor-pointer" style="width: 120px">
+                        <span class="st-title cursor-pointer text-center" style="width: 120px">
                         <?= esc($item->name); ?>
                         </span>
                     </div>
@@ -103,8 +103,8 @@
                                 <div class="card-img-overlay d-flex flex-column justify-content-end p-3">
                                     <div class="custom-overlay p-3 px-0">
                                         <?php
-                                            $postItems = getPostByCategoryId($item->id);
-                                            $sumView = getPageViewsSumByCategory($item->id);
+                                            $postItems = getPostByCategoryDefinition($item->definition_id);
+                                            $sumView = getPageViewsSumByDefinitionId($item->definition_id);
 
                                             if (!empty($postItems)):
                                                 $i = 0;
@@ -132,9 +132,9 @@
                                 </div>
                                 <div class="card-footer bg-primary text-white d-flex justify-content-between align-items-center rounded-0 py-1">
                                     <div>
-                                        <i class="bi bi-eye"></i> <?= esc($sumView->pageviews ?? 0); ?> Lượt xem
+                                        <i class="bi bi-eye"></i> <?= esc($sumView->pageviews ?? 0); ?> <?= trans("count_view"); ?>
                                     </div>
-                                    <a href="<?= generateCategoryURL($item); ?>" class="text-white text-decoration-none">Xem thêm <i class="bi bi-arrow-right"></i></a>
+                                    <a href="<?= generateCategoryURL($item); ?>" class="text-white text-decoration-none"><?= trans("load_more"); ?> <i class="bi bi-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>

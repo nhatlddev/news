@@ -279,10 +279,11 @@ class CategoryController extends BaseAdminController
     public function getSubCategories2()
     {
         $json = $this->request->getJSON();
-        $parentId = $json->parentCategoryId ?? null;
+        $parentId = $json->parentId ?? null;
 
         if (!empty($parentId)) {
-            $subCategories = $this->categoryModel->getSubCategoriesByParentId($parentId);
+            $category = $this->categoryModel->getCategory($parentId);
+            $subCategories = $this->categoryModel->getSubCategoriesByDefinitionIdAndLang($category->definition_id);
             if (!empty($subCategories)) {
                 return $this->response->setJSON($subCategories);
             }
@@ -317,4 +318,38 @@ class CategoryController extends BaseAdminController
             $this->session->setFlashdata('error', trans("msg_error"));
         }
     }
+
+    public function deleteCategoryPost2()
+    {
+        if (!checkUserPermission('categories')) {
+            exit();
+        }
+        $id = inputPost('id');
+
+        $categories = $this->categoryModel->getCategoryByDefinition($id);
+
+        if(!empty($categories)) {
+            foreach ($categories as $category) {
+                if (!empty($this->categoryModel->getSubCategoriesByParentId($category['id']))) {
+                    $this->session->setFlashdata('error', trans("msg_delete_subcategories"));
+                    exit();
+                }
+
+                $postModel = new PostModel();
+                $categories2 = $this->categoryModel->getCategories();
+                if (!empty($postModel->getPostCountByCategory($category['id'], $categories2))) {
+                    $this->session->setFlashdata('error', trans("msg_delete_posts"));
+                    exit();
+                }
+                $this->categoryModel->deleteCategory($category['id']);
+            }
+            if ($this->categoryModel->deleteCategoryDefinition($id)) {
+                $this->session->setFlashdata('success', trans("msg_deleted"));
+                resetCacheDataOnChange();
+            } else {
+                $this->session->setFlashdata('error', trans("msg_error"));
+            }
+        }
+    }
+
 }

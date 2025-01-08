@@ -260,19 +260,33 @@ class PostController extends BaseAdminController
         $data['users'] = $authModel->getActiveUsers();
         $data['definition_id'] = $id;
 
-        //define category ids
-        $category = $this->categoryModel->getCategory($data['posts'][0]['category_id']);
-        $data['parentCategoryId'] = $data['posts'][0]['category_id'];
+        // $category = $this->categoryModel->getCategory($data['posts'][0]['category_id']);
+        // $data['parentCategoryId'] = $data['posts'][0]['category_id'];
+        // $data['subCategoryId'] = 0;
+        // if (!empty($category) && $category->parent_id != 0) {
+        //     $parentCategory = $this->categoryModel->getCategory($category->parent_id);
+        //     if (!empty($parentCategory)) {
+        //         $data['parentCategoryId'] = $parentCategory->id;
+        //         $data['subCategoryId'] = $category->id;
+        //     }
+        // }
+        // $data['categories'] = $this->categoryModel->getParentCategoriesByLang($this->activeLang->id);
+        // $data['subCategories'] = $this->categoryModel->getSubCategoriesByDefinitionIdAndLang($data['parentCategoryId']);
+
+        $categoryDefinitionId = $data['posts'][0]['category_definition_id'];
+        $category = $this->categoryModel->getCategoryByDefinitionAndLang($categoryDefinitionId, $this->activeLang->id);
         $data['subCategoryId'] = 0;
-        if (!empty($category) && $category->parent_id != 0) {
-            $parentCategory = $this->categoryModel->getCategory($category->parent_id);
+
+        if (!empty($category) && $category->parent_definition_id != null) {
+            $parentCategory = $this->categoryModel->getCategoryByDefinitionAndLang($category->parent_definition_id, $this->activeLang->id);
             if (!empty($parentCategory)) {
-                $data['parentCategoryId'] = $parentCategory->id;
-                $data['subCategoryId'] = $category->id;
+                $data['parentCategoryId'] = $parentCategory->definition_id;
+                $data['subCategoryId'] = $category->definition_id;
             }
         }
-        $data['categories'] = $this->categoryModel->getParentCategories();
-        $data['subCategories'] = $this->categoryModel->getSubCategoriesByParentId($data['parentCategoryId']);
+
+        $data['categories'] = $this->categoryModel->getParentCategoriesByLang($this->activeLang->id);
+        $data['subCategories'] = $this->categoryModel->getSubCategoriesByDefinitionIdAndLang($data['parentCategoryId']);
         
         echo view('admin/includes/_header', $data);
         echo view('admin/post/multiple_post/edit_multiple_post', $data);
@@ -409,17 +423,17 @@ class PostController extends BaseAdminController
     public function featuredPosts()
     {
         checkPermission('manage_all_posts');
-        $data['title'] = trans('featured_posts');
+        $data['title'] = trans('breaking_news');
         $data['authors'] = $this->authModel->getUsersHavePosts();
         $data['formAction'] = adminUrl('featured-posts');
-        $data['listType'] = 'featured_posts';
+        $data['listType'] = 'breaking_news';
 
-        $numRows = $this->postAdminModel->getPostsCount('featured_posts');
+        $numRows = $this->postAdminModel->getPostsCount('breaking_news');
         $pager = paginate($this->perPage, $numRows);
-        $data['posts'] = $this->postAdminModel->getPostsPaginated('featured_posts', $this->perPage, $pager->offset);
+        $data['posts'] = $this->postAdminModel->getPostsPaginated('breaking_news', $this->perPage, $pager->offset);
 
         echo view('admin/includes/_header', $data);
-        echo view('admin/post/posts', $data);
+        echo view('admin/post/multiple_post/posts2', $data);
         echo view('admin/includes/_footer');
     }
 
@@ -516,7 +530,7 @@ class PostController extends BaseAdminController
         $data['posts'] = $this->postAdminModel->getDraftsPaginated($this->perPage, $pager->offset);
 
         echo view('admin/includes/_header', $data);
-        echo view('admin/post/drafts', $data);
+        echo view('admin/post/multiple_post/draft2', $data);
         echo view('admin/includes/_footer');
     }
 
@@ -545,7 +559,7 @@ class PostController extends BaseAdminController
             }
         } elseif ($option == 'add_remove_breaking') {
             checkPermission('manage_all_posts');
-            if ($this->postAdminModel->addRemoveBreaking($post)) {
+            if ($this->postAdminModel->addRemoveBreaking2($post)) {
                 $result = true;
             }
         } elseif ($option == 'add_remove_recommended') {
@@ -565,7 +579,7 @@ class PostController extends BaseAdminController
             }
         } elseif ($option == 'publish_draft') {
             checkPermission('add_post');
-            if ($this->postAdminModel->publishDraft($post)) {
+            if ($this->postAdminModel->publishDraft2($post)) {
                 $result = true;
             }
         }

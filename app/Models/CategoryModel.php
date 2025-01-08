@@ -63,9 +63,17 @@ class CategoryModel extends BaseModel
                 if(empty($data['parent_id'])) {
                     $saveData['show_at_footer'] = $data['show_at_footer'] ?? 0;
                     $saveData['parent_id'] = 0;
+                    $saveData['parent_definition_id'] = null;
                 } else {
                     $saveData['show_at_footer'] = 0;
+
+                    $parentCategory = $this->getCategory($data['parent_id']);
                     $saveData['parent_id'] = $data['parent_id'];
+
+                    if($parentCategory) {
+                        $saveData['parent_definition_id'] = $parentCategory->definition_id;
+                    }
+                    
                 }
 
                 foreach ($this->activeLanguages as $lang) {
@@ -283,9 +291,16 @@ class CategoryModel extends BaseModel
             if(empty($data['parent_id'])) {
                 $editData['show_at_footer'] = $data['show_at_footer'];
                 $editData['parent_id'] = 0;
+                $editData['parent_definition_id'] = null;
             } else {
                 $editData['show_at_footer'] = 0;
+
+                $parentCategory = $this->getCategory($data['parent_id']);
+
                 $editData['parent_id'] = $data['parent_id'];
+                if($parentCategory) {
+                    $editData['parent_definition_id'] = $parentCategory->definition_id;
+                }
             }
 
             $editData['lang_id'] = inputPost('categories[' . $lang->id . '][lang_id]');
@@ -342,7 +357,7 @@ class CategoryModel extends BaseModel
         }
 
         if(!empty($data['post_id'])) {
-
+            $this->builderDefinition->where('id', $categoryDefinition->id)->update(['post_definition_id' => $data['post_id']]);
         }
 
         return true;
@@ -427,6 +442,29 @@ class CategoryModel extends BaseModel
         return $this->builder->where('definition_id', cleanNumber($id))->get()->getResultArray();
     }
 
+    public function getCategoryByDefinitionAndLang($id, $langId)
+    {
+        if(empty($langId)) {
+            $langId = $this->activeLang->id;
+        }
+        return $this->builder->where('definition_id', cleanNumber($id))
+        ->where('lang_id', cleanNumber($langId))    
+        ->get()->getRow();
+    }
+
+    public function getSubCategoriesByDefinitionAndLang($id, $langId)
+    {
+        if(empty($langId)) {
+            $langId = $this->activeLang->id;
+        }
+
+        $category = $this->builder->where('id', cleanNumber($id))->get()->getRow();
+
+        return $this->builder->where('parent_definition_id', cleanNumber($category->definition_id))
+        ->where('lang_id', cleanNumber($langId))    
+        ->get()->getResult();
+    }
+
     public function getCategoryDefinition($id)
     {
         return $this->builderDefinition->where('id', cleanNumber($id))->get()->getRow();
@@ -464,14 +502,27 @@ class CategoryModel extends BaseModel
 
     public function getCategoriesAndPostByLang($langId)
     {
-        $this->buildQuery();
-        return $this->builder
-            ->select('categories.*, posts.title_slug, posts.id as post_id')
-            ->join('posts', 'posts.id = categories.post_id', 'left')
-            ->where('categories.lang_id', cleanNumber($langId))
-            ->orderBy('categories.category_order')
-            ->get()
-            ->getResult();
+        $langId = cleanNumber($langId); 
+        $query = "
+            SELECT 
+                categories.*, 
+                posts.title_slug, 
+                posts.id AS post_id, 
+                (
+                    SELECT name_slug 
+                    FROM categories AS tbl_categories 
+                    WHERE tbl_categories.definition_id = categories.parent_definition_id 
+                    AND tbl_categories.lang_id = ?
+                ) AS parent_slug
+            FROM categories
+            INNER JOIN news.category_definition cd ON cd.id = categories.definition_id
+            LEFT JOIN post_definition pd ON pd.id = cd.post_definition_id
+            LEFT JOIN posts ON (posts.definition_id = pd.id AND posts.lang_id = ?)
+            WHERE categories.lang_id = ?
+            ORDER BY categories.category_order
+        ";
+
+        return $this->db->query($query, [$langId, $langId, $langId])->getResult();
     }
 
     public function getShowAtMenuCategory($langId)
@@ -493,6 +544,10 @@ class CategoryModel extends BaseModel
     //get parent categories by lang
     public function getParentCategoriesByLang($langId)
     {
+        if(empty(($langId))) {
+            $langId = $this->activeLang->id;
+        }
+
         return $this->builder->where('parent_id', 0)->where('lang_id', cleanNumber($langId))->orderBy('name')->get()->getResult();
     }
 
@@ -506,6 +561,14 @@ class CategoryModel extends BaseModel
     public function getSubCategoriesByParentId($parentId)
     {
         return $this->builder->where('parent_id', cleanNumber($parentId))->orderBy('name')->get()->getResult();
+    }
+
+    public function getSubCategoriesByDefinitionIdAndLang($definitionId)
+    {
+        return $this->builder
+            ->where('parent_definition_id', cleanNumber($definitionId))
+            ->where('lang_id', cleanNumber($this->activeLang->id))
+            ->orderBy('name')->get()->getResult();
     }
 
     //get categories count
@@ -548,6 +611,15 @@ class CategoryModel extends BaseModel
         $category = $this->getCategory($id);
         if (!empty($category)) {
             return $this->builder->where('id', $category->id)->delete();
+        }
+        return false;
+    }
+
+    public function deleteCategoryDefinition($id)
+    {
+        $categoryDef = $this->getCategoryDefinition($id);
+        if (!empty($categoryDef)) {
+            return $this->builderDefinition->where('id', $categoryDef->id)->delete();
         }
         return false;
     }

@@ -5836,8 +5836,8 @@
   z-index: 3;
   color: #fff;
   cursor: default;
-  background-color: #fb4c35;
-  border-color: #fb4c35;
+  background-color: #FF5D00;
+  border-color: #FF5D00;
 }
 
 .text-wrap {
@@ -5910,18 +5910,18 @@
 
 .swal-large-button {
   font-size: large;
-  background-color: #fb4c35;
+  background-color: #FF5D00;
 }
 
 .text-primary {
-  color: #fb4c35 !important;
+  color: #FF5D00 !important;
 }
 .text-dark {
   color: #000000;
 }
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-  color: #fb4c35;
+  color: #FF5D00;
   cursor: default;
   font-weight: bold;
   background-color: #fff;

@@ -7,7 +7,7 @@
         </div>
         <div class="box-body">
             <div class="form-group">
-                <label class="control-label"><?= trans('title'); ?></label>
+                <label class="control-label"><?= trans('title'); ?> (<?= $language->name; ?>)</label>
                 <input type="text" class="form-control" 
                        name="posts[<?= $language->id; ?>][title]" 
                        placeholder="<?= trans('title'); ?>" 
@@ -17,7 +17,7 @@
             <input type="hidden" name="posts[<?= $language->id; ?>][id]" value="<?= $post['id']; ?>">
 
             <div class="form-group">
-                <label class="control-label"><?= trans('slug'); ?><small>(<?= trans('slug_exp'); ?>)</small></label>
+                <label class="control-label"><?= trans('slug'); ?> (<?= $language->name; ?>) <small><?= trans('slug_exp'); ?></small></label>
                 <input type="text" class="form-control" 
                        name="posts[<?= $language->id; ?>][title_slug]" 
                        placeholder="<?= trans('slug'); ?>" 
@@ -59,7 +59,7 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (checkUserPermission('manage_all_posts')): ?>
+            <!-- <?php if (checkUserPermission('manage_all_posts')): ?>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
@@ -78,11 +78,32 @@
                 <input type="hidden" 
                     name="posts[<?= $language->id; ?>][is_featured]" 
                     value="<?= isset($post) ? $post['is_featured'] : '0'; ?>">
+            <?php endif; ?> -->
+
+            <?php if (checkUserPermission('manage_all_posts')): ?>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">
+                            <label class="control-label"><?= trans('add_featured'); ?></label>
+                        </div>
+                        <div class="col-md-8 col-sm-12">
+                            <input type="checkbox" 
+                                name="posts[<?= $language->id; ?>][is_breaking]" 
+                                value="1" 
+                                class="square-purple" 
+                                <?= (isset($post) && $post['is_breaking'] == 1) ? 'checked' : ''; ?>>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <input type="hidden" 
+                    name="posts[<?= $language->id; ?>][is_breaking]" 
+                    value="<?= isset($post) ? $post['is_breaking'] : '0'; ?>">
             <?php endif; ?>
 
             <div class="row my-4">
                 <div class="col-md-4 col-sm-12">
-                    <label class="control-label"><?= trans('files'); ?> <small class="small-title"><?= trans("files_exp"); ?></small></label>
+                    <label class="control-label"><?= trans('files'); ?> (<?= $language->name; ?>) <small class="small-title"><?= trans("files_exp"); ?></small></label>
                     <a class='btn btn-sm bg-purple' 
                         data-toggle="modal" 
                         data-target="#file_manager<?= $language->id; ?>">
@@ -114,7 +135,7 @@
                 </div>
             </div>
 
-            <label class="control-label control-label-content"><?= trans('content'); ?></label>
+            <label class="control-label control-label-content"><?= trans('content'); ?> (<?= $language->name; ?>)</label>
             <div id="main_editor" class="mb-3">
                 <div class="row">
                     <div class="col-sm-12 editor-buttons">

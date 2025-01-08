@@ -16,13 +16,14 @@
         <input type="hidden" id="definition_id" name="definition_id" value="<?= $definition_id; ?>">
 
         <div class="row">
-            <div class="col-12 col-md-9">
+            <div class="col-12 col-md-9 pe-0">
                 <div class="tab-content">
                     <?php foreach ($activeLanguages as $index => $language): ?>
                         <div class="tab-pane <?= $index === 0 ? 'active' : ''; ?>" 
                             id="form-lang-<?= $language->id; ?>">
 
                             <input type="hidden" name="posts[<?= $language->id; ?>][lang_id]" value="<?= $language->id; ?>">
+                            <input type="hidden" name="posts[<?= $language->id; ?>][id]" value="<?= $postDataByLang[$language->id]['id']; ?>">
 
                             <div class="form-post">
                             <?= view('admin/post/multiple_post/edit_post_left', [
@@ -34,7 +35,7 @@
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-3 ps-0">
                 <?= view('admin/post/multiple_post/_upload_image_box2', ['language' => $language]); ?>
                 <div class="box">
                     <div class="box-header with-border">
@@ -49,7 +50,7 @@
                                 <option value=""><?= trans('select_category'); ?></option>
                                 <?php if (!empty($categories)):
                                     foreach ($categories as $item): ?>
-                                        <option value="<?= $item->id; ?>" <?= $item->id == $parentCategoryId ? 'selected' : ''; ?>><?= esc($item->name); ?></option>
+                                        <option value="<?= $item->id; ?>" <?= $item->definition_id == $parentCategoryId ? 'selected' : ''; ?>><?= esc($item->name); ?></option>
                                     <?php endforeach;
                                 endif; ?>
                             </select>
@@ -61,7 +62,7 @@
                                 <option value="0"><?= trans('select_category'); ?></option>
                                 <?php if (!empty($subCategories)): ?>
                                     <?php foreach ($subCategories as $subCategory): ?>
-                                        <option value="<?= $subCategory->id; ?>" <?= $subCategory->id == $subCategoryId ? 'selected' : ''; ?>>
+                                        <option value="<?= $subCategory->id; ?>" <?= $subCategory->definition_id == $subCategoryId ? 'selected' : ''; ?>>
                                             <?= esc($subCategory->name); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -102,13 +103,13 @@
                             <button name="status" 
                                     value="1" 
                                     class="btn btn-primary pull-right" 
-                                    onclick="submitFormsAsJSON()">
+                                    onclick="submitFormsAsJSON(false)">
                                 <?= trans('btn_submit'); ?>
                             </button>
                             <button name="status" 
                                     value="0" 
                                     class="btn btn-warning btn-draft pull-right" 
-                                    onclick="allowSubmitForm = true;">
+                                    onclick="submitFormsAsJSON(true)">
                                 <?= trans('save_draft'); ?>
                             </button>
                         </div>
@@ -117,10 +118,6 @@
                 
             </div>
         </div>
-
-        
-        <!-- Tab Content -->
-        
     </div>
 </div>
 
@@ -140,12 +137,12 @@
             });
         });
 
-        $('input[name*="[is_featured]"]').on('ifChecked', function () {
-            $('input[name*="[is_featured]"]').iCheck('check');
+        $('input[name*="[is_breaking]"]').on('ifChecked', function () {
+            $('input[name*="[is_breaking]"]').iCheck('check');
         });
 
-        $('input[name*="[is_featured]"]').on('ifUnchecked', function () {
-            $('input[name*="[is_featured]"]').iCheck('uncheck');
+        $('input[name*="[is_breaking]"]').on('ifUnchecked', function () {
+            $('input[name*="[is_breaking]"]').iCheck('uncheck');
         });
     });
 
@@ -198,7 +195,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '<?= csrf_hash(); ?>'
             },
-            body: JSON.stringify({ parentCategoryId: parentCategoryId })
+            body: JSON.stringify({ parentId: parentCategoryId })
         })
         .then(response => {
             if (!response.ok) {
@@ -228,7 +225,7 @@
         });
     }
 
-    function submitFormsAsJSON() {
+    function submitFormsAsJSON(isDraft) {
         tinymce.triggerSave();
 
         const languageForms = document.querySelectorAll('.tab-pane');
@@ -247,14 +244,15 @@
                 content: form.querySelector('textarea[name="posts[' + langId + '][content]"]').value,
                 tags: form.querySelector('input[name="posts[' + langId + '][tags]"]').value,
                 visibility: form.querySelector('input[name="posts[' + langId + '][visibility]"]:checked').value,
-                is_featured: form.querySelector('input[name="posts[' + langId + '][is_featured]"]').checked ? 1 : 0,
+                is_breaking: form.querySelector('input[name="posts[' + langId + '][is_breaking]"]').checked ? 1 : 0,
                 category_id: document.getElementById(`categories`).value,
                 subcategory_id: document.getElementById(`subcategories`).value,
                 selected_files: [],
                 date_published: document.getElementById(`input_date_published`).value,
                 post_image_id: document.getElementById(`post_image_id`).value,
                 image_url: document.getElementById(`video_thumbnail_url`).value,
-                post_id: form.querySelector('input[name="posts[' + langId + '][id]"]').value
+                post_id: form.querySelector('input[name="posts[' + langId + '][id]"]').value,
+                status: isDraft ? 0 : 1
             };
 
             const selectedFileInputs = document.querySelectorAll('#post_selected_files' + langId + ' input[name="post_selected_file_id[]"]');

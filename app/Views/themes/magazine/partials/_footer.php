@@ -56,7 +56,7 @@
 
             <!-- Newsletter -->
             <div class="col-md-2 mb-4">
-                <h5 class="text-primary-first">Liên hệ</h5>
+                <h5 class="text-primary-first"><?= trans("footer_contact"); ?></h5>
                 <!-- <p>Get in touch with us right now.</p> -->
                 <div class="d-flex flex-column cursor-pointer">
                     <span class="hover-primary">Anh Khoa - 2303</span>

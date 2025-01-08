@@ -113,7 +113,7 @@
                                                             <a href="<?= adminUrl('edit-category/' . $item->definition_id); ?>"><i class="fa fa-edit option-icon"></i><?= trans('edit'); ?></a>
                                                         </li>
                                                         <li>
-                                                            <a href="javascript:void(0)" onclick="deleteItem('CategoryController/deleteCategoryPost','<?= $item->id; ?>','<?= clrQuotes(trans("confirm_category")); ?>');"><i class="fa fa-trash option-icon"></i><?= trans('delete'); ?></a>
+                                                            <a href="javascript:void(0)" onclick="deleteItem('CategoryController/deleteCategoryPost2','<?= $item->definition_id; ?>','<?= clrQuotes(trans("confirm_category")); ?>');"><i class="fa fa-trash option-icon"></i><?= trans('delete'); ?></a>
                                                         </li>
                                                     </ul>
                                                 </div>

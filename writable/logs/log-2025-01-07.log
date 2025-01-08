@@ -1,0 +1,45 @@
+CRITICAL - 2025-01-07 16:01:15 --> error_log(): Argument #1 ($message) must be of type string, array given
+in APPPATH\Models\PostAdminModel.php on line 291.
+ 1 APPPATH\Models\PostAdminModel.php(291): error_log([...])
+ 2 APPPATH\Controllers\PostController.php(299): App\Models\PostAdminModel->editPost2([...])
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPostPost2()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-07 16:03:52 --> Attempt to read property "id" on null
+in APPPATH\Models\PostAdminModel.php on line 327.
+ 1 APPPATH\Models\PostAdminModel.php(327): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Attempt to read property "id" on null', 'C:\\xampp\\htdocs\\news\\app\\Models\\PostAdminModel.php', 327)
+ 2 APPPATH\Controllers\PostController.php(299): App\Models\PostAdminModel->editPost2([...])
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPostPost2()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-07 16:06:02 --> Attempt to read property "id" on null
+in APPPATH\Models\PostAdminModel.php on line 327.
+ 1 APPPATH\Models\PostAdminModel.php(327): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Attempt to read property "id" on null', 'C:\\xampp\\htdocs\\news\\app\\Models\\PostAdminModel.php', 327)
+ 2 APPPATH\Controllers\PostController.php(299): App\Models\PostAdminModel->editPost2([...])
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPostPost2()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-07 16:08:26 --> Undefined array key "category_definition_id"
+in APPPATH\Controllers\PostController.php on line 276.
+ 1 APPPATH\Controllers\PostController.php(276): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "category_definition_id"', 'C:\\xampp\\htdocs\\news\\app\\Controllers\\PostController.php', 276)
+ 2 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPost2('12')
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 4 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-07 16:10:22 --> Undefined array key "category_definition_id"
+in APPPATH\Controllers\PostController.php on line 276.
+ 1 APPPATH\Controllers\PostController.php(276): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "category_definition_id"', 'C:\\xampp\\htdocs\\news\\app\\Controllers\\PostController.php', 276)
+ 2 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPost2('12')
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 4 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2025-01-07 16:10:23 --> Undefined array key "category_definition_id"
+in APPPATH\Controllers\PostController.php on line 276.
+ 1 APPPATH\Controllers\PostController.php(276): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "category_definition_id"', 'C:\\xampp\\htdocs\\news\\app\\Controllers\\PostController.php', 276)
+ 2 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\PostController->editPost2('12')
+ 3 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\PostController))
+ 4 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()

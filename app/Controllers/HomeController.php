@@ -250,16 +250,18 @@ class HomeController extends BaseController
 
             $numRows = getCachedData('post_count_category' . $category->id);
             if (empty($numRows)) {
-                $numRows = $this->postModel->getPostCountByCategory($category->id, $this->categories);
+                $numRows = $this->postModel->getPostCountByCategory2($category->id, $category->definition_id, $this->categories);
                 setCacheData('post_count_category', $numRows);
             }
+            
             $pager = paginate($this->postsPerPage, $numRows);
-            // $cacheKey = 'posts_category_' . $category->id . '_page' . $pager->currentPage;
-            // $data['posts'] = getCachedData($cacheKey);
-            // if (empty($data['posts'])) {
-            $data['posts'] = $this->postModel->getPostsByCategoryPaginated($category->id, $this->categories, $this->postsPerPage, $pager->offset);
-                // setCacheData($cacheKey, $data['posts']);
-            // }
+            $cacheKey = 'posts_category_' . $category->id . '_page' . $pager->currentPage;
+
+            $data['posts'] = getCachedData($cacheKey);
+            if (empty($data['posts'])) {
+            $data['posts'] = $this->postModel->getPostsByCategoryPaginated2($category->id, $category->definition_id, $this->categories, $this->postsPerPage, $pager->offset);
+                setCacheData($cacheKey, $data['posts']);
+            }
             $data['postMostView'] = $this->postModel->getMostViewedPosts(10);
 
             echo loadView('partials/_header', $data);

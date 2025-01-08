@@ -122,6 +122,7 @@ abstract class BaseController extends Controller
             $menuLinks = $pageModel->getMenuLinks($this->activeLang->id);
             setCacheData('menu_links', $menuLinks);
         }
+        
         //widgets
         $this->widgets = getCachedData('widgets');
         if (empty($this->widgets)) {
@@ -134,6 +135,7 @@ abstract class BaseController extends Controller
             $this->categories = getCategoriesAndPostByLang($this->activeLang->id);
             setCacheData('categories', $this->categories);
         }
+        
         //latest categories posts
         $this->latestCategoryPosts = getCachedData('latest_category_posts');
         if (empty($this->latestCategoryPosts)) {

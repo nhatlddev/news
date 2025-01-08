@@ -62,15 +62,17 @@
                                                     <?php if ($item->is_slider): ?>
                                                         <label class="label bg-red label-table"><?= trans('slider'); ?></label>
                                                     <?php endif;
-                                                    if ($item->is_featured): ?>
+                                                    if ($item->is_breaking): ?>
                                                         <label class="label bg-olive label-table"><?= trans('featured'); ?></label>
                                                     <?php endif;
                                                     if ($item->is_recommended): ?>
                                                         <label class="label bg-aqua label-table"><?= trans('recommended'); ?></label>
                                                     <?php endif;
-                                                    if ($item->is_breaking): ?>
-                                                        <label class="label bg-teal label-table"><?= trans('breaking'); ?></label>
-                                                    <?php endif;
+                                                    // if ($item->is_breaking): 
+                                                    ?>
+                                                        <!-- <label class="label bg-teal label-table"><?= trans('breaking'); ?></label> -->
+                                                    <?php 
+                                                    // endif;
                                                     if ($item->need_auth): ?>
                                                         <label class="label label-warning label-table"><?= trans('only_registered'); ?></label>
                                                     <?php endif; ?>
@@ -126,15 +128,15 @@
                                                         <a href="<?= adminUrl('edit-post2/' . $item->definition_id); ?>"><i class="fa fa-edit option-icon"></i><?= trans('edit'); ?></a>
                                                     </li>
                                                     <?php if (checkUserPermission('manage_all_posts')): ?>
-                                                        <?php if ($item->is_featured == 1): ?>
+                                                        <?php if ($item->is_breaking== 1): ?>
                                                             <li>
-                                                                <button type="submit" name="option" value="add_remove_featured" class="btn-list-button">
+                                                                <button type="submit" name="option" value="add_remove_breaking" class="btn-list-button">
                                                                     <i class="fa fa-times option-icon"></i><?= trans('remove_featured'); ?>
                                                                 </button>
                                                             </li>
                                                         <?php else: ?>
                                                             <li>
-                                                                <button type="submit" name="option" value="add_remove_featured" class="btn-list-button">
+                                                                <button type="submit" name="option" value="add_remove_breaking" class="btn-list-button">
                                                                     <i class="fa fa-plus option-icon"></i><?= trans('add_featured'); ?>
                                                                 </button>
                                                             </li>

@@ -1,26 +1,22 @@
-ERROR - 2025-01-06 14:18:45 --> mysqli_sql_exception: Column 'category_order' cannot be null in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
+ERROR - 2025-01-06 21:07:32 --> mysqli_sql_exception: Unknown column 'c.status' in 'where clause' in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
 Stack trace:
-#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `ca...', 0)
-#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ca...')
-#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ca...')
-#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ca...', Array, false)
-#4 C:\xampp\htdocs\news\app\Models\CategoryModel.php(122): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\news\app\Controllers\CategoryController.php(93): App\Models\CategoryModel->addCategory2()
-#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\CategoryController->addCategoryPost2()
-#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\CategoryController))
-#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
-#10 {main}
-ERROR - 2025-01-06 14:18:45 --> mysqli_sql_exception: Column 'category_order' cannot be null in C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php:295
-Stack trace:
-#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('INSERT INTO `ca...', 0)
-#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `ca...')
-#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `ca...')
-#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(2309): CodeIgniter\Database\BaseConnection->query('INSERT INTO `ca...', Array, false)
-#4 C:\xampp\htdocs\news\app\Models\CategoryModel.php(122): CodeIgniter\Database\BaseBuilder->insert(Array)
-#5 C:\xampp\htdocs\news\app\Controllers\CategoryController.php(93): App\Models\CategoryModel->addCategory2()
-#6 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\CategoryController->addCategoryPost2()
-#7 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\CategoryController))
-#8 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
-#9 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
-#10 {main}
+#0 C:\xampp\htdocs\news\system\Database\MySQLi\Connection.php(295): mysqli->query('SELECT `posts`....', 0)
+#1 C:\xampp\htdocs\news\system\Database\BaseConnection.php(692): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `posts`....')
+#2 C:\xampp\htdocs\news\system\Database\BaseConnection.php(606): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `posts`....')
+#3 C:\xampp\htdocs\news\system\Database\BaseBuilder.php(1616): CodeIgniter\Database\BaseConnection->query('SELECT `posts`....', Array, false)
+#4 C:\xampp\htdocs\news\app\Models\PostModel.php(102): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\news\app\Common.php(1919): App\Models\PostModel->getLatestPosts(14)
+#6 C:\xampp\htdocs\news\app\Controllers\HomeController.php(37): getLatestPosts(14)
+#7 C:\xampp\htdocs\news\system\CodeIgniter.php(932): App\Controllers\HomeController->index()
+#8 C:\xampp\htdocs\news\system\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\HomeController))
+#9 C:\xampp\htdocs\news\system\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\news\index.php(77): CodeIgniter\CodeIgniter->run()
+#11 {main}
+CRITICAL - 2025-01-06 21:07:32 --> Call to a member function getResult() on bool
+in APPPATH\Models\PostModel.php on line 102.
+ 1 APPPATH\Common.php(1919): App\Models\PostModel->getLatestPosts(14)
+ 2 APPPATH\Controllers\HomeController.php(37): getLatestPosts(14)
+ 3 SYSTEMPATH\CodeIgniter.php(932): App\Controllers\HomeController->index()
+ 4 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\HomeController))
+ 5 SYSTEMPATH\CodeIgniter.php(366): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(77): CodeIgniter\CodeIgniter->run()

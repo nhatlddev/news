@@ -570,6 +570,20 @@ if (!function_exists('getSubMenuLinks')) {
     }
 }
 
+if (!function_exists('getSubMenuLinksByDefinition')) {
+    function getSubMenuLinksByDefinition($menuLinks, $parentId, $type)
+    {
+        // var_dump($menuLinks);
+        $subLinks = array();
+        if (!empty($menuLinks)) {
+            $subLinks = array_filter($menuLinks, function ($item) use ($parentId, $type) {
+                return $item->item_type == $type && $item->definition_id == $parentId;
+            });
+        }
+        return $subLinks;
+    }
+}
+
 //get gallery album
 if (!function_exists('getGalleryAlbum')) {
     function getGalleryAlbum($id)
@@ -1640,6 +1654,18 @@ if (!function_exists('getSubcategories')) {
     }
 }
 
+if (!function_exists('getSubcategoriesByDefinition')) {
+    function getSubcategoriesByDefinition($parentId, $definitionId, $categories)
+    {
+        if (!empty($categories)) {
+            return array_filter($categories, function ($item) use ($parentId, $definitionId) {
+                return $item->parent_definition_id == $definitionId;
+            });
+        }
+        return null;
+    }
+}
+
 //get category tree
 if (!function_exists('getCategoryTree')) {
     function getCategoryTree($categoryId, $categories)
@@ -1652,6 +1678,25 @@ if (!function_exists('getCategoryTree')) {
             if (!empty($subCategories)) {
                 foreach ($subCategories as $subCategory) {
                     array_push($tree, $subCategory->id);
+                }
+            }
+        }
+        return $tree;
+    }
+}
+
+if (!function_exists('getCategoryTree2')) {
+    function getCategoryTree2($categoryId, $definitionId, $categories)
+    {
+        $tree = array();
+        $categoryId = cleanNumber($categoryId);
+        $definitionId = cleanNumber($definitionId);
+        if (!empty($categoryId)) {
+            array_push($tree, $definitionId);
+            $subCategories = getSubcategoriesByDefinition($categoryId, $definitionId, $categories);
+            if (!empty($subCategories)) {
+                foreach ($subCategories as $subCategory) {
+                    array_push($tree, $subCategory->definition_id);
                 }
             }
         }
@@ -1779,11 +1824,29 @@ if (!function_exists('getPostByCategoryId')) {
     }
 }
 
+if (!function_exists('getPostByCategoryDefinition')) {
+    function getPostByCategoryDefinition($definitionId)
+    {
+        $model = new \App\Models\PostModel();
+        $posts = $model->getPostByCategoryDefinition($definitionId);
+        return $posts;
+    }
+}
+
 if (!function_exists('getPageViewsSumByCategory')) {
     function getPageViewsSumByCategory($categoryId)
     {
         $model = new \App\Models\PostModel();
         $sum = $model->getPageViewsSumByCategory($categoryId);
+        return $sum;
+    }
+}
+
+if (!function_exists('getPageViewsSumByDefinitionId')) {
+    function getPageViewsSumByDefinitionId($definitionId)
+    {
+        $model = new \App\Models\PostModel();
+        $sum = $model->getPageViewsSumByDefinitionId($definitionId);
         return $sum;
     }
 }

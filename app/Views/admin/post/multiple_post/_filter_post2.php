@@ -52,30 +52,26 @@
             <?php endif; ?>
             <div class="item-table-filter">
                 <label><?= trans('category'); ?></label>
-                <select id="categories" name="category" class="form-control" onchange="getSubCategories(this.value);">
+                <select id="categories" name="category" class="form-control" onchange="updateSubCategories(this.value);">
                     <option value=""><?= trans("all"); ?></option>
-                    <?php $langId = inputGet('lang_id');
-                    if (!empty($langId)) {
+                    <?php
+                        $langId = inputGet('lang_id'); 
                         $categories = $categoryModel->getParentCategoriesByLang($langId);
-                    } else {
-                        $categories = $categoryModel->getParentCategories();
-                    }
-                    if (!empty($categories)):
-                        foreach ($categories as $item): ?>
-                            <option value="<?= $item->id; ?>" <?= inputGet('category', true) == $item->id ? 'selected' : ''; ?>>
-                                <?= esc($item->name); ?>
-                            </option>
-                        <?php endforeach;
-                    endif; ?>
-                </select>
+                        if (!empty($categories)):
+                            foreach ($categories as $item): ?>
+                                <option value="<?= $item->id; ?>" <?= inputGet('category', true) == $item->id ? 'selected' : ''; ?>><?= esc($item->name); ?></option>
+                            <?php endforeach;
+                        endif; ?>
+                </select>   
             </div>
             <div class="item-table-filter">
                 <div class="form-group">
                     <label class="control-label"><?= trans('subcategory'); ?></label>
-                    <select id="subcategories" name="subcategory" class="form-control">
+                    <select id="subcategories" name="subcategory" class="form-control subcategory-selector">
                         <option value=""><?= trans("all"); ?></option>
-                        <?php if (!empty(inputGet('category'))):
-                            $subCategories = $categoryModel->getSubCategoriesByParentId(cleanNumber(inputGet('category')));
+                        <?php 
+                            if (!empty(inputGet('category'))): 
+                            $subCategories = $categoryModel->getSubCategoriesByDefinitionAndLang(inputGet('category'), $langId);
                             if (!empty($subCategories)):
                                 foreach ($subCategories as $item): ?>
                                     <option value="<?= $item->id; ?>" <?= inputGet('subcategory', true) == $item->id ? 'selected' : ''; ?>><?= esc($item->name); ?></option>
@@ -98,3 +94,45 @@
         </form>
     </div>
 </div>
+
+<script>
+    function updateSubCategories(parentCategoryId) {
+        if (!parentCategoryId) {
+            const subcategorySelectors = document.querySelectorAll('.subcategory-selector');
+            subcategorySelectors.forEach(selector => {
+                selector.innerHTML = '<option value="0"><?= trans('select_category'); ?></option>';
+            });
+            return;
+        }
+
+        fetch('<?= adminUrl("categories/getSubCategories2"); ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '<?= csrf_hash(); ?>'
+            },
+            body: JSON.stringify({ parentId: parentCategoryId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); 
+        })
+        .then(data => {
+            const subcategorySelectors = document.querySelectorAll('.subcategory-selector');
+            subcategorySelectors.forEach(selector => {
+                selector.innerHTML = '<option value="all"><?= trans('all'); ?></option>';
+                data.forEach(subcategory => {
+                    const option = document.createElement('option');
+                    option.value = subcategory.id;
+                    option.textContent = subcategory.name;
+                    selector.appendChild(option);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Lỗi khi lấy subcategories:', error);
+        });
+    }
+</script>

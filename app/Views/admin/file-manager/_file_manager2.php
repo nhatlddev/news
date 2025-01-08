@@ -101,7 +101,20 @@ if (!empty($extArray)) {
     $fileExtensions = json_encode($newArray);
 } ?>
 
+<script type="text/html" id="files-template-file">
+    <li class="media">
+        <img class="preview-img" src="<?= base_url('assets/admin/plugins/file-manager/file.png'); ?>" alt="">
+        <div class="media-body">
+            <div class="progress">
+                <div class="dm-progress-waiting"><?= trans("waiting"); ?></div>
+                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </li>
+</script>
+
 <script src="<?= base_url('assets/admin/plugins/file-uploader/js/jquery.dm-uploader.min.js'); ?>"></script>
+
 <script>
     <?php foreach ($activeLanguages as $lang): ?>
     $(function () {
@@ -134,11 +147,11 @@ if (!empty($extArray)) {
                 ui_multi_update_file_progress(id, percent);
             },
             onUploadSuccess: function (id, data) {
-                refresh_files_<?= $lang->id; ?>();
                 document.getElementById("uploaderFile" + id).remove();
                 ui_multi_update_file_status(id, 'success', 'Upload Complete');
                 ui_multi_update_file_progress(id, 100, 'success', false);
                 $("#btn_reset_upload<?= $lang->id; ?>").hide();
+                refresh_files_<?= $lang->id; ?>();
             },
             onFileTypeError: function (file) {
                 swal({
@@ -163,12 +176,25 @@ if (!empty($extArray)) {
         $(this).hide();
     });
 
+    // function refresh_files_<?= $lang->id; ?>() {
+    //     $.ajax({
+    //         type: "POST",
+    //         url: '<?= base_url("FileController/getFiles"); ?>',
+    //         success: function (response) {
+    //             $("#file_upload_response<?= $lang->id; ?>").html(response);
+    //         }
+    //     });
+    // }
     function refresh_files_<?= $lang->id; ?>() {
         $.ajax({
             type: "POST",
-            url: '<?= base_url("FileController/getFiles"); ?>',
+            url: VrConfig.baseURL + "/FileController/getFiles",
+            data: setAjaxData({}),
             success: function (response) {
-                $("#file_upload_response<?= $lang->id; ?>").html(response);
+                var obj = JSON.parse(response);
+                if (obj.result == 1) {
+                    document.getElementById("file_upload_response<?= $lang->id; ?>").innerHTML = obj.content;
+                }
             }
         });
     }
@@ -201,8 +227,10 @@ if (!empty($extArray)) {
             url: VrConfig.baseURL + "/FileController/deleteFile",
             data: setAjaxData(data),
             success: function (response) {
+                console.log(response);
                 $('#btn_file_delete<?= $lang->id; ?>').hide();
                 $('#btn_file_select<?= $lang->id; ?>').hide();
+                refresh_files_<?= $lang->id; ?>();  
             }
         });
     });
@@ -239,5 +267,65 @@ if (!empty($extArray)) {
         $('#btn_file_delete<?= $lang->id; ?>').hide();
         $('#btn_file_select<?= $lang->id; ?>').hide();
     }
+
+    jQuery(function ($) {
+        $('#file_manager<?= $lang->id; ?> .file-manager-content').on('scroll', function () {
+            var search = $("#input_search_file<?= $lang->id; ?>").val().trim();
+            if (search.length < 1) {
+                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                    var min = 0;
+                    $('#file_upload_response<?= $lang->id; ?> .file-box').each(function () {
+                        var value = parseInt($(this).attr('data-file-id'));
+                        if (min == 0) {
+                            min = value;
+                        }
+                        if (value < min) {
+                            min = value;
+                        }
+                    });
+                    var data = {
+                        'min': min
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: VrConfig.baseURL + "/FileController/loadMoreFiles",
+                        data: setAjaxData(data),
+                        success: function (response) {
+                            setTimeout(function () {
+                                var obj = JSON.parse(response);
+                                if (obj.result == 1) {
+                                    $("#file_upload_response<?= $lang->id; ?>").append(obj.content);
+                                }
+                            }, 100);
+                        }
+                    });
+                }
+            }
+        })
+    });
+
+    //search file
+    $(document).on('input', '#input_search_file<?= $lang->id; ?>', function () {
+        var search = $(this).val().trim();
+        var data = {
+            "search": search
+        };
+        $.ajax({
+            type: "POST",
+            url: VrConfig.baseURL + "/FileController/searchFiles",
+            data: setAjaxData(data),
+            success: function (response) {
+                if (search.length > 1) {
+                    var obj = JSON.parse(response);
+                    if (obj.result == 1) {
+                        document.getElementById("file_upload_response<?= $lang->id; ?>").innerHTML = obj.content;
+                    }
+                } else {
+                    refresh_files_<?= $lang->id; ?>();  
+                    // refresh_files();
+                }
+            }
+        });
+    });
     <?php endforeach; ?>
 </script>
